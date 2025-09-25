@@ -1,6 +1,6 @@
 # FinFluence - Social Finance Platform
 
-A comprehensive social finance platform that combines the engaging features of social media with powerful financial tools, built with React, Node.js, MongoDB, and Python ML services.
+A comprehensive social finance platform inspired from subreddits from reddit application, Linkedin and Instagram that combines their engaging features and aspects of social media with powerful financial tools, built with React, Node.js, MongoDB, and Python ML services.
 
 ## Quick Start
 
@@ -41,7 +41,7 @@ npm run seed
 - Natural language financial data retrieval
 
 ## Tech Stack
-
+- **MERN STACK** - MongoDB, Express, React, NodeJS
 - **Frontend**: React 18, Tailwind CSS, Socket.io
 - **Backend**: Node.js, Express, MongoDB, JWT Auth
 - **ML Service**: Python, Flask, Scikit-learn
