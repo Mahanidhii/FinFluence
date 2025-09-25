@@ -1,7 +1,5 @@
 # FinFluence - Social Finance Platform
 
-# FinFluence - Social Finance Platform
-
 A comprehensive social finance platform that combines the engaging features of social media with powerful financial tools, built with React, Node.js, MongoDB, and Python ML services.
 
 ## Quick Start
@@ -19,16 +17,16 @@ npm run seed
 
 **Access the platform**: http://localhost:3000
 
-## ✨ Features
+## Features
 
-### 🏦 Financial Tools
+### Financial Tools
 - **Financial Assistant Chatbot** - Text-based AI for instant financial queries
 - **AI Expense Prediction** - Machine learning powered spending forecasts and Query Retrieval 
 - **Portfolio Tracking** - Real-time investment monitoring  
 - **Budget Management** - Category-wise expense tracking
 - **Savings Goals** - Automated goal tracking and achievements
 
-### 👥 Social Features  
+### Social Features  
 - **Social Feed** - Share financial wins, tips, and insights
 - **Investment Clubs** - Join communities of like-minded investors
 - **Group Challenges** - Gamified savings and investment challenges
