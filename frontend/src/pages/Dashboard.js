@@ -191,7 +191,7 @@ const Dashboard = () => {
           <div className="card">
             <div className="flex items-center justify-between mb-6">
               <h2 className="text-xl font-semibold text-gray-900">
-                🤖 AI Expense Predictor
+                AI Expense Predictor
               </h2>
               <button className="btn-secondary text-sm">
                 Share Prediction

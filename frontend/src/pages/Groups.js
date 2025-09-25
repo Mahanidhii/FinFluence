@@ -90,7 +90,7 @@ const Groups = () => {
         <div className="flex justify-between items-center mb-8">
           <div>
             <h1 className="text-3xl font-bold text-gray-900">
-              Investment Groups 👥
+              Investment Groups
             </h1>
             <p className="text-gray-600 mt-2">
               Connect with like-minded investors and learn together

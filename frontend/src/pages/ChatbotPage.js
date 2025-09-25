@@ -7,7 +7,7 @@ const ChatbotPage = () => {
       <div className="max-w-4xl mx-auto">
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-gray-900 mb-2">
-            Financial Assistant 🤖
+            Financial Assistant
           </h1>
           <p className="text-gray-600">
             Get instant answers about your expenses, investments, savings, and financial goals.
