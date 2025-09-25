@@ -8,15 +8,17 @@ import {
   User, 
   Settings,
   TrendingUp,
-  MessageCircle
+  MessageCircle,
+  PieChart,
+  BarChart3
 } from 'lucide-react';
 
 const Sidebar = () => {
   const location = useLocation();
 
   const navigation = [
-    { name: 'Dashboard', href: '/dashboard', icon: Home },
-    { name: 'Feed', href: '/feed', icon: FeedIcon },
+    { name: 'Feed', href: '/feed', icon: Home },
+    { name: 'My Finance', href: '/dashboard', icon: PieChart },
     { name: 'Groups', href: '/groups', icon: Users },
     { name: 'Challenges', href: '/challenges', icon: Trophy },
     { name: 'Assistant', href: '/assistant', icon: MessageCircle },

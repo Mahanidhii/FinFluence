@@ -110,10 +110,10 @@ const Dashboard = () => {
       {/* Welcome Section */}
       <div className="mb-8">
         <h1 className="text-3xl font-bold text-gray-900">
-          Welcome back, {user?.firstName}! 👋
+          My Finance
         </h1>
         <p className="text-gray-600 mt-2">
-          Here's your financial overview for today
+          Welcome back, {user?.firstName}! Here's your complete financial overview
         </p>
       </div>
 
