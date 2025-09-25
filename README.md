@@ -227,18 +227,18 @@ cd ml-service && python app.py
 ## Demo Flow
 1. **Login & Profile Setup**
 2. **Dashboard**: Expense prediction + round-up savings
-3. **Feed**: Posts, milestones, and reels
-4. **Groups**: Investment communities and discussion forums
+3. **Feed**: Posts(linkedin), milestones, and reels(like instagram)
+4. **Groups**: Investment communities and discussion forums for both general discussions and financial educational purposes
 5. **Challenges**: Join savings and investment challenges
 
 ## Screenshots
-(Screenshots will be added as development progresses)
 
-## Contributing
+
+## Contribution
 1. Fork the repository
-2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
-3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
-4. Push to the branch (`git push origin feature/AmazingFeature`)
+2. Create your feature branch (`git checkout -b feature/NewFeature`)
+3. Commit your changes (`git commit -m 'Add some NewFeature'`)
+4. Push to the branch (`git push origin feature/NewFeature`)
 5. Open a Pull Request
 
 ## License
