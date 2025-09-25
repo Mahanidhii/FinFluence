@@ -1,0 +1,512 @@
+# FinFluence - Comprehensive .gitignore
+# This file ensures sensitive, temporary, and build files are not tracked by Git
+
+# ==========================================
+# ENVIRONMENT & SECRETS
+# ==========================================
+
+# Environment files (contains sensitive data)
+.env
+.env.local
+.env.development
+.env.development.local
+.env.test
+.env.test.local
+.env.production
+.env.production.local
+
+# Specific environment files by service
+backend/.env
+backend/.env.local
+backend/.env.development
+backend/.env.production
+backend/.env.test
+frontend/.env
+frontend/.env.local
+frontend/.env.development.local
+frontend/.env.test.local
+frontend/.env.production.local
+ml-service/.env
+
+# Keep example environment files (these are safe templates)
+!*.env.example
+!backend/.env.example
+!frontend/.env.example
+!ml-service/.env.example
+
+# API Keys and Secrets
+secrets/
+keys/
+certificates/
+*.pem
+*.key
+*.crt
+*.p12
+*.pfx
+jwt-secret.txt
+database-url.txt
+google-credentials.json
+aws-credentials.json
+firebase-config.json
+
+# ==========================================
+# NODE.JS & NPM
+# ==========================================
+
+# Dependencies (auto-generated, large, and can be recreated)
+node_modules/
+*/node_modules/
+**/node_modules/
+
+# NPM/Yarn logs and debug files
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+
+# NPM cache
+.npm
+.yarn-integrity
+
+# Optional npm cache directory
+.eslintcache
+
+# Runtime data
+pids
+*.pid
+*.seed
+*.pid.lock
+
+# Compiled binary addons
+build/Release
+
+# TypeScript cache
+*.tsbuildinfo
+
+# Microbundle cache
+.rpt2_cache/
+.rts2_cache_cjs/
+.rts2_cache_es/
+.rts2_cache_umd/
+
+# Optional REPL history
+.node_repl_history
+
+# Output of 'npm pack'
+*.tgz
+
+# Bower dependency directory
+bower_components
+
+# Grunt intermediate storage
+.grunt
+
+# node-waf configuration
+.lock-wscript
+
+# Dependency directories
+jspm_packages/
+
+# ==========================================
+# REACT & FRONTEND BUILD FILES
+# ==========================================
+
+# Build outputs (generated files)
+build/
+dist/
+out/
+.next/
+.nuxt/
+
+# Frontend specific builds
+frontend/build/
+frontend/dist/
+frontend/.next/
+frontend/out/
+
+# Static site generators
+# Note: frontend/public/ should NOT be ignored (contains index.html)
+.cache/
+.parcel-cache/
+
+# Service workers (generated)
+sw.js
+workbox-*.js
+
+# Storybook build outputs
+.out/
+.storybook-out/
+
+# Bundle analyzer reports
+bundle-analyzer-report.html
+
+# ==========================================
+# PYTHON & ML SERVICE
+# ==========================================
+
+# Python bytecode (compiled files)
+__pycache__/
+*.py[cod]
+*$py.class
+*.pyc
+*.pyo
+
+# C extensions
+*.so
+
+# Distribution / packaging
+.Python
+develop-eggs/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# Virtual environments
+.venv/
+venv/
+env/
+ENV/
+env.bak/
+venv.bak/
+ml-service/venv/
+ml-service/env/
+
+# PyInstaller
+*.manifest
+*.spec
+
+# Unit test / coverage reports
+htmlcov/
+.tox/
+.coverage
+.coverage.*
+nosetests.xml
+coverage.xml
+*.cover
+.hypothesis/
+.pytest_cache/
+
+# Jupyter Notebook checkpoints
+.ipynb_checkpoints
+
+# pyenv
+.python-version
+
+# celery beat schedule file
+celerybeat-schedule
+
+# SageMath parsed files
+*.sage.py
+
+# Spyder project settings
+.spyderproject
+.spyproject
+
+# Rope project settings
+.ropeproject
+
+# mkdocs documentation
+/site
+
+# mypy
+.mypy_cache/
+.dmypy.json
+dmypy.json
+
+# ML Models and training data (often large files)
+ml-service/models/*.pkl
+ml-service/models/*.joblib
+ml-service/data/
+ml-service/datasets/
+ml-service/trained_models/
+
+# ==========================================
+# DATABASE FILES
+# ==========================================
+
+# Local database files
+*.sqlite
+*.sqlite3
+*.db
+
+# Database dumps
+*.sql
+*.dump
+
+# MongoDB local data
+database/data/
+database/logs/
+
+# ==========================================
+# LOGS & TEMPORARY FILES
+# ==========================================
+
+# Log files
+*.log
+logs/
+log/
+error.log
+access.log
+combined.log
+pm2.log
+
+# Service-specific logs
+backend/logs/
+backend/*.log
+ml-service/*.log
+
+# Temporary files
+tmp/
+temp/
+.tmp/
+*.tmp
+*.bak
+*.backup
+
+# ==========================================
+# DEVELOPMENT TOOLS & IDEs
+# ==========================================
+
+# VS Code
+.vscode/
+.history/
+
+# JetBrains IDEs
+.idea/
+
+# Sublime Text
+*.sublime-project
+*.sublime-workspace
+
+# Vim
+*.swp
+*.swo
+*~
+
+# Emacs
+*~
+\#*\#
+/.emacs.desktop
+/.emacs.desktop.lock
+*.elc
+auto-save-list
+tramp
+.\#*
+
+# Other editors
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# ==========================================
+# OPERATING SYSTEM FILES
+# ==========================================
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+*.cab
+*.msi
+*.msm
+*.msp
+*.lnk
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+Icon?
+._*
+.DocumentRevisions-V100
+.fseventsd
+.Spotlight-V100
+.TemporaryItems
+.Trashes
+.VolumeIcon.icns
+.com.apple.timemachine.donotpresent
+.AppleDB
+.AppleDesktop
+Network Trash Folder
+Temporary Items
+.apdisk
+
+# Linux
+.fuse_hidden*
+.directory
+.Trash-*
+.nfs*
+
+# ==========================================
+# DEPLOYMENT & CI/CD
+# ==========================================
+
+# Docker override files
+docker-compose.override.yml
+
+# Deployment directories
+deployment/
+.serverless/
+
+# Terraform
+*.tfstate
+*.tfstate.*
+.terraform/
+.terraform.lock.hcl
+
+# Kubernetes
+*.kubeconfig
+
+# Build artifacts
+*.tar.gz
+*.zip
+*.rar
+*.7z
+*.dmg
+*.gz
+*.iso
+*.jar
+
+# ==========================================
+# TESTING
+# ==========================================
+
+# Test results and coverage
+test-results/
+coverage/
+*.lcov
+.nyc_output
+
+# Jest
+jest.config.js.bak
+
+# Playwright
+playwright-report/
+playwright/.cache/
+
+# ==========================================
+# USER UPLOADS & MEDIA
+# ==========================================
+
+# User uploaded content (might contain sensitive data)
+uploads/
+media/
+static/media/
+backend/uploads/
+backend/public/uploads/
+
+# ==========================================
+# MISCELLANEOUS
+# ==========================================
+
+# Performance monitoring
+.lighthouse/
+
+# Backup files
+*.backup
+
+# Cache directories
+.cache/
+
+# Local development files
+local/
+dev/
+
+# Generated documentation
+docs/build/
+docs/_build/
+
+# ==========================================
+# ADDITIONAL CONFIG FILES TO IGNORE
+# ==========================================
+
+# Package manager files (can be regenerated)
+package.json
+package-lock.json
+yarn.lock
+*/package.json
+*/package-lock.json
+*/yarn.lock
+backend/package.json
+backend/package-lock.json
+frontend/package.json
+frontend/package-lock.json
+database/package.json
+database/package-lock.json
+
+# Python packaging files (keeping requirements.txt as it's essential)
+Pipfile
+Pipfile.lock
+
+# Build and config tools
+postcss.config.js
+tailwind.config.js
+webpack.config.js
+vite.config.js
+rollup.config.js
+babel.config.js
+jest.config.js
+*/postcss.config.js
+*/tailwind.config.js
+*/webpack.config.js
+
+# Setup scripts (environment specific)
+setup.bat
+setup.sh
+install.sh
+configure.sh
+
+# Project specific config
+.gitattributes
+
+# ==========================================
+# KEEP THESE IMPORTANT FILES
+# (Explicitly not ignored)
+# ==========================================
+
+# Example/template files (safe to share)
+!*.example
+!*.template
+!config.example.*
+!config.template.*
+
+# Documentation
+!README.md
+!*.md
+!docs/*.md
+!CHANGELOG.md
+!LICENSE
+
+# Docker configuration
+!Dockerfile
+!docker-compose.yml
+!.dockerignore
+
+# CI/CD configuration
+!.github/
+!.gitlab-ci.yml
+!.travis.yml
+!.circleci/
+
+# Linting and formatting
+!.eslintrc.*
+!.prettierrc.*
+!.editorconfig
+!.gitignore
+
+# TypeScript configuration
+!tsconfig.json
+!jsconfig.json
