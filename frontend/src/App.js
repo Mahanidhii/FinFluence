@@ -1,49 +1,34 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
-import { AuthProvider } from './context/AuthContext';
-import { useAuth } from './context/AuthContext';
 import { Toaster } from 'react-hot-toast';
+
+// Context
+import { AuthProvider } from './context/AuthContext';
+
+// Components
+import Sidebar from './components/Sidebar';
+import Navbar from './components/Navbar';
+import ProtectedRoute from './components/ProtectedRoute';
 
 // Pages
 import Login from './pages/Login';
 import Register from './pages/Register';
 import Dashboard from './pages/Dashboard';
 import Feed from './pages/Feed';
-import Profile from './pages/Profile';
 import Groups from './pages/Groups';
 import Challenges from './pages/Challenges';
+import Profile from './pages/Profile';
 import Settings from './pages/Settings';
 import ChatbotPage from './pages/ChatbotPage';
 
-// Components
-import Navbar from './components/Navbar';
-import Sidebar from './components/Sidebar';
-
-import './index.css';
-
-// Protected Route Component
-const ProtectedRoute = ({ children }) => {
-  const { user, loading } = useAuth();
-  
-  if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-primary-500"></div>
-      </div>
-    );
-  }
-  
-  return user ? children : <Navigate to="/login" />;
-};
-
-// Main App Layout
+// Layout wrapper for authenticated pages
 const AppLayout = ({ children }) => {
   return (
-    <div className="min-h-screen bg-gray-50">
-      <Navbar />
-      <div className="flex">
-        <Sidebar />
-        <main className="flex-1 ml-64">
+    <div className="h-screen bg-gray-50">
+      <Sidebar />
+      <div className="ml-64 flex flex-col h-full">
+        <Navbar />
+        <main className="flex-1 overflow-y-auto p-6">
           {children}
         </main>
       </div>
@@ -51,7 +36,6 @@ const AppLayout = ({ children }) => {
   );
 };
 
-// App Component
 function App() {
   return (
     <AuthProvider>
@@ -88,14 +72,6 @@ function App() {
               </ProtectedRoute>
             } />
             
-            <Route path="/profile" element={
-              <ProtectedRoute>
-                <AppLayout>
-                  <Profile />
-                </AppLayout>
-              </ProtectedRoute>
-            } />
-            
             <Route path="/groups" element={
               <ProtectedRoute>
                 <AppLayout>
@@ -112,14 +88,6 @@ function App() {
               </ProtectedRoute>
             } />
             
-            <Route path="/settings" element={
-              <ProtectedRoute>
-                <AppLayout>
-                  <Settings />
-                </AppLayout>
-              </ProtectedRoute>
-            } />
-            
             <Route path="/assistant" element={
               <ProtectedRoute>
                 <AppLayout>
@@ -128,6 +96,22 @@ function App() {
               </ProtectedRoute>
             } />
             
+            <Route path="/profile" element={
+              <ProtectedRoute>
+                <AppLayout>
+                  <Profile />
+                </AppLayout>
+              </ProtectedRoute>
+            } />
+            
+            <Route path="/settings" element={
+              <ProtectedRoute>
+                <AppLayout>
+                  <Settings />
+                </AppLayout>
+              </ProtectedRoute>
+            } />
+
             {/* Redirect any unknown routes to dashboard */}
             <Route path="*" element={<Navigate to="/dashboard" />} />
           </Routes>

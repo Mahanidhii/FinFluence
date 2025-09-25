@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import axios from 'axios';
+import api from '../utils/api';
 import toast from 'react-hot-toast';
 
 const AuthContext = createContext();
@@ -20,7 +20,6 @@ export const AuthProvider = ({ children }) => {
   useEffect(() => {
     const token = localStorage.getItem('token');
     if (token) {
-      axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
       fetchUserProfile();
     } else {
       setLoading(false);
@@ -29,12 +28,11 @@ export const AuthProvider = ({ children }) => {
 
   const fetchUserProfile = async () => {
     try {
-      const response = await axios.get('/api/auth/profile');
+      const response = await api.get('/auth/profile');
       setUser(response.data.user);
     } catch (error) {
       console.error('Error fetching user profile:', error);
       localStorage.removeItem('token');
-      delete axios.defaults.headers.common['Authorization'];
     } finally {
       setLoading(false);
     }
@@ -43,7 +41,7 @@ export const AuthProvider = ({ children }) => {
   const login = async (email, password) => {
     try {
       setLoading(true);
-      const response = await axios.post('/api/auth/login', {
+      const response = await api.post('/auth/login', {
         email,
         password,
       });
@@ -52,9 +50,6 @@ export const AuthProvider = ({ children }) => {
       
       // Store token in localStorage
       localStorage.setItem('token', token);
-      
-      // Set axios default header
-      axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
       
       // Set user in state
       setUser(user);
@@ -73,15 +68,12 @@ export const AuthProvider = ({ children }) => {
   const register = async (userData) => {
     try {
       setLoading(true);
-      const response = await axios.post('/api/auth/register', userData);
+      const response = await api.post('/auth/register', userData);
       
       const { token, user } = response.data;
       
       // Store token in localStorage
       localStorage.setItem('token', token);
-      
-      // Set axios default header
-      axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
       
       // Set user in state
       setUser(user);
@@ -101,9 +93,6 @@ export const AuthProvider = ({ children }) => {
     // Remove token from localStorage
     localStorage.removeItem('token');
     
-    // Remove axios default header
-    delete axios.defaults.headers.common['Authorization'];
-    
     // Clear user state
     setUser(null);
     
@@ -112,7 +101,7 @@ export const AuthProvider = ({ children }) => {
 
   const updateProfile = async (profileData) => {
     try {
-      const response = await axios.put('/api/auth/profile', profileData);
+      const response = await api.put('/auth/profile', profileData);
       setUser(response.data.user);
       toast.success('Profile updated successfully');
       return { success: true };

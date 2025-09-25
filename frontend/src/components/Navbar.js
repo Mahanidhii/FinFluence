@@ -26,11 +26,11 @@ const Navbar = () => {
   const unreadCount = notifications.filter(n => n.unread).length;
 
   return (
-    <nav className="bg-white shadow-sm border-b border-gray-200 fixed w-full top-0 z-40">
+    <nav className="bg-white shadow-sm border-b border-gray-200">
       <div className="max-w-full mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between h-16">
           {/* Left side - Search */}
-          <div className="flex items-center flex-1 ml-64">
+          <div className="flex items-center flex-1">
             <div className="max-w-lg w-full lg:max-w-xs">
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">

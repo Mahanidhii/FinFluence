@@ -5,8 +5,6 @@ import {
   Activity as FeedIcon, 
   Users, 
   Trophy, 
-  User, 
-  Settings,
   TrendingUp,
   MessageCircle,
   PieChart,
@@ -22,8 +20,6 @@ const Sidebar = () => {
     { name: 'Groups', href: '/groups', icon: Users },
     { name: 'Challenges', href: '/challenges', icon: Trophy },
     { name: 'Assistant', href: '/assistant', icon: MessageCircle },
-    { name: 'Profile', href: '/profile', icon: User },
-    { name: 'Settings', href: '/settings', icon: Settings },
   ];
 
   const isActive = (href) => location.pathname === href;
