@@ -1,21 +1,7 @@
-# FinFluence - Social Finance Platform
+# FinFluence 
+# Social Finance Platform
 
 A comprehensive social finance platform inspired from subreddits from reddit application, Linkedin and Instagram that combines their engaging features and aspects of social media with powerful financial tools, built with React, Node.js, MongoDB, and Python ML services.
-
-## Quick Start
-
-```bash
-# Install all dependencies
-npm run install:all
-
-# Start all services
-npm run dev
-
-# Seed database with sample data
-npm run seed
-```
-
-**Access the platform**: http://localhost:3000
 
 ## Features
 
@@ -73,10 +59,9 @@ npm run seed
 
 - **[Development Guide](docs/DEVELOPMENT.md)** - Complete setup and development workflow
 - **[API Documentation](docs/API.md)** - Backend API endpoints and usage
-- **[Deployment Guide](docs/DEPLOYMENT.md)** - Production deployment instructions
+
 
 ## Demo Flow
-
 1. **Register/Login** - Create account or login with test credentials
 2. **Dashboard** - View AI predictions, portfolio, and savings goals
 3. **Social Feed** - Share financial posts and engage with community  
@@ -84,53 +69,12 @@ npm run seed
 5. **Take Challenges** - Participate in savings and investment challenges
 6. **Track Progress** - Monitor achievements and financial growth
 
-## Test Credentials
 
-```
-rahul@example.com / password123 (Investor profile)
-priya@example.com / password123 (Saver profile)  
-arjun@example.com / password123 (Trader profile)
-```
-
-## Deployment
-
-### Local Development
-```bash
-npm run dev  # Starts all services
-```
-
-### Production
-```bash
-npm run build        # Build frontend
-npm run docker:up    # Deploy with Docker
-```
-
-## Contributing
-
-1. Fork the repository
-2. Create feature branch: `git checkout -b feature/amazing-feature`
-3. Commit changes: `git commit -m 'Add amazing feature'`
-4. Push to branch: `git push origin feature/amazing-feature`
-5. Open a Pull Request
-
-## License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
-## Acknowledgments
-
-- React community for excellent documentation
-- MongoDB for flexible data modeling
-- Scikit-learn for ML capabilities
-- Socket.io for real-time features
-
----
-
-**Built for the finance community**
+**Built for the blooming finance community**
 
 ## Core Features
 
-### 1. Social Feed (Instagram + LinkedIn style)
+### 1. Social Feed (Reddit + Instagram + LinkedIn style)
 - Users can post finance milestones ("Saved my first ₹100,000 this month 🎉")
 - Friends can like, comment, share tips
 - Verified finance experts can post educational content
@@ -157,18 +101,10 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 ## Social Layer Features
 - **Profiles**: Show savings streaks, badges, milestones
 - **Feed**: Milestones, challenges, reels, expert advice
-- **Follow/Connect**: Friends, finance mentors, clubs
+- **Follow/Connect**: Friends, finance mentors, clubs, groups/communities (like reddit)
 - **Groups**: Investment communities, expense management groups
 - **Gamification**: Badges for achievements
 
-## Tech Stack
-- **Frontend**: React with modern UI components
-- **Backend**: Node.js + Express.js
-- **Database**: MongoDB for social + transaction data
-- **AI/ML**: Python ML model for expense prediction
-- **Voice Assistant**: Google Speech-to-Text API
-- **Authentication**: JWT tokens
-- **Real-time**: Socket.io for live features
 
 ## Project Structure
 ```
@@ -179,15 +115,13 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 └── docs/             # Documentation and API specs
 ```
 
-## Quick Start
-
 ### Prerequisites
-- Node.js (v14+)
+- MERN Stack : MongoDB, Express, React, NodeJS
 - Python (v3.8+)
-- MongoDB
 - Git
 
-### Installation
+
+### Installation & Quick Start
 1. Clone the repository
 ```bash
 git clone https://github.com/Mahanidhii/CRCE-Finance.git
@@ -214,24 +148,31 @@ pip install -r requirements.txt
 
 5. Start all services
 ```bash
-# Terminal 1: Frontend
+# Terminal 1: Backend
 cd frontend && npm start
 
-# Terminal 2: Backend
-cd backend && npm run dev
+# Terminal 2: ML Service
+cd backend && python app.py
 
 # Terminal 3: ML Service
-cd ml-service && python app.py
-```
+cd ml-service && npm run dev
 
-## Demo Flow
-1. **Login & Profile Setup**
-2. **Dashboard**: Expense prediction + round-up savings
-3. **Feed**: Posts(linkedin), milestones, and reels(like instagram)
-4. **Groups**: Investment communities and discussion forums for both general discussions and financial educational purposes
-5. **Challenges**: Join savings and investment challenges
+```
+_Access the platform from_: http://localhost:3000
+
 
 ## Screenshots
+_Will be uploaded once developmental phase is over_
+
+
+## Tech Stack
+- **Frontend**: React with modern UI components
+- **Backend**: Node.js + Express.js
+- **Database**: MongoDB for social + transaction data
+- **AI/ML**: Python ML model for expense prediction
+- **Voice Assistant**: Google Speech-to-Text API
+- **Authentication**: JWT tokens
+- **Real-time**: Socket.io for live features
 
 
 ## Contribution
@@ -241,10 +182,11 @@ cd ml-service && python app.py
 4. Push to the branch (`git push origin feature/NewFeature`)
 5. Open a Pull Request
 
-## License
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
 ## Acknowledgments
-- Inspired by the social aspects of Instagram and LinkedIn
-- Built for the financial empowerment of young adults
-- Special thanks to CRCE for project support
+- Inspired by the social aspects of financial subreddits in Reddit, Instagram and LinkedIn
+- React community for excellent documentation
+- MongoDB for flexible data modeling
+- Scikit-learn for ML capabilities
+- Socket.io for real-time features
+- Built for the financial empowerment of the youth
