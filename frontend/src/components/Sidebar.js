@@ -8,7 +8,9 @@ import {
   TrendingUp,
   MessageCircle,
   PieChart,
-  BarChart3
+  BarChart3,
+  Newspaper,
+  Bitcoin
 } from 'lucide-react';
 
 const Sidebar = () => {
@@ -20,6 +22,8 @@ const Sidebar = () => {
     { name: 'Groups', href: '/groups', icon: Users },
     { name: 'Challenges', href: '/challenges', icon: Trophy },
     { name: 'Assistant', href: '/assistant', icon: MessageCircle },
+    { name: 'Stock News', href: '/stock-news', icon: Newspaper },
+    { name: 'Crypto News', href: '/crypto-news', icon: Bitcoin },
   ];
 
   const isActive = (href) => location.pathname === href;

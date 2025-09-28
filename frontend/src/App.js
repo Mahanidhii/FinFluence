@@ -20,6 +20,8 @@ import Challenges from './pages/Challenges';
 import Profile from './pages/Profile';
 import Settings from './pages/Settings';
 import ChatbotPage from './pages/ChatbotPage';
+import StockNews from './pages/StockNews';
+import CryptoNews from './pages/CryptoNews';
 
 // Layout wrapper for authenticated pages
 const AppLayout = ({ children }) => {
@@ -92,6 +94,22 @@ function App() {
               <ProtectedRoute>
                 <AppLayout>
                   <ChatbotPage />
+                </AppLayout>
+              </ProtectedRoute>
+            } />
+            
+            <Route path="/stock-news" element={
+              <ProtectedRoute>
+                <AppLayout>
+                  <StockNews />
+                </AppLayout>
+              </ProtectedRoute>
+            } />
+            
+            <Route path="/crypto-news" element={
+              <ProtectedRoute>
+                <AppLayout>
+                  <CryptoNews />
                 </AppLayout>
               </ProtectedRoute>
             } />
