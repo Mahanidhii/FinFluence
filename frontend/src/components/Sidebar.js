@@ -65,10 +65,6 @@ const Sidebar = () => {
                 <span>Savings Streak</span>
                 <span className="font-semibold">15 days</span>
               </div>
-              <div className="flex justify-between">
-                <span>Current Rank</span>
-                <span className="font-semibold">#247</span>
-              </div>
             </div>
           </div>
         </div>

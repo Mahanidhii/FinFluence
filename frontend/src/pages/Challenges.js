@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Trophy, Calendar, Users, Target, Plus, Crown, Timer } from 'lucide-react';
+import { Trophy, Calendar, Users, Target, Plus, Timer } from 'lucide-react';
 
 const Challenges = () => {
   const [activeTab, setActiveTab] = useState('available');
@@ -7,7 +7,7 @@ const Challenges = () => {
     {
       id: 1,
       title: 'Save ₹20,000 in 30 Days',
-      description: 'Challenge yourself to save ₹667 daily for a month. Track your progress and compete with friends!',
+      description: 'Challenge yourself to save ₹667 daily for a month. Track your progress and share your journey!',
       type: 'savings',
       duration: '30 days',
       participants: 1247,
@@ -55,7 +55,7 @@ const Challenges = () => {
     {
       id: 4,
       title: 'Learn & Earn: Financial Literacy',
-      description: 'Complete 10 financial learning modules and earn certificates while competing with peers.',
+      description: 'Complete 10 financial learning modules and earn certificates while learning with peers.',
       type: 'education',
       duration: '14 days',
       participants: 756,
@@ -123,7 +123,7 @@ const Challenges = () => {
               Financial Challenges 🎯
             </h1>
             <p className="text-gray-600 mt-2">
-              Challenge yourself, compete with friends, and achieve your financial goals
+              Challenge yourself, collaborate with friends, and achieve your financial goals
             </p>
           </div>
           <button className="btn-primary flex items-center">
@@ -150,13 +150,7 @@ const Challenges = () => {
             <p className="text-sm text-gray-600">Total Saved</p>
           </div>
           
-          <div className="card text-center">
-            <div className="p-3 bg-warning-100 rounded-full w-fit mx-auto mb-3">
-              <Crown className="h-6 w-6 text-warning-600" />
-            </div>
-            <p className="text-2xl font-bold text-gray-900">#247</p>
-            <p className="text-sm text-gray-600">Current Rank</p>
-          </div>
+
           
           <div className="card text-center">
             <div className="p-3 bg-purple-100 rounded-full w-fit mx-auto mb-3">
@@ -311,40 +305,7 @@ const Challenges = () => {
           ))}
         </div>
 
-        {/* Leaderboard Section */}
-        <div className="mt-12">
-          <h2 className="text-2xl font-bold text-gray-900 mb-6">This Week's Leaderboard 🏆</h2>
-          <div className="card">
-            <div className="space-y-4">
-              {[
-                { rank: 1, name: 'Priya Sharma', points: 2450, badge: '👑' },
-                { rank: 2, name: 'Rajesh Kumar', points: 2380, badge: '🥈' },
-                { rank: 3, name: 'Anita Desai', points: 2290, badge: '🥉' },
-                { rank: 4, name: 'You', points: 1920, badge: '' },
-                { rank: 5, name: 'Suresh Patel', points: 1850, badge: '' },
-              ].map((user) => (
-                <div key={user.rank} className={`flex items-center justify-between p-3 rounded-lg ${
-                  user.name === 'You' ? 'bg-primary-50 border border-primary-200' : 'hover:bg-gray-50'
-                }`}>
-                  <div className="flex items-center space-x-3">
-                    <div className="flex items-center justify-center w-8 h-8 bg-gray-100 rounded-full">
-                      <span className="text-sm font-bold text-gray-600">#{user.rank}</span>
-                    </div>
-                    <div>
-                      <p className={`font-medium ${user.name === 'You' ? 'text-primary-800' : 'text-gray-900'}`}>
-                        {user.badge} {user.name}
-                      </p>
-                    </div>
-                  </div>
-                  <div className="text-right">
-                    <p className="font-bold text-gray-900">{user.points.toLocaleString()}</p>
-                    <p className="text-xs text-gray-500">points</p>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
+
       </div>
     </div>
   );
