@@ -71,7 +71,7 @@ const Sidebar = () => {
 
         {/* Footer */}
         <div className="p-4 border-t border-gray-200 text-xs text-gray-500">
-          <p>&copy; 2024 FinFluence. All rights reserved.</p>
+          <p>&copy;COPYWRITING</p>
         </div>
       </div>
     </div>
