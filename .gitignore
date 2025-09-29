@@ -1,11 +1,4 @@
-# FinFluence - Comprehensive .gitignore
-# This file ensures sensitive, temporary, and build files are not tracked by Git
-
-# ==========================================
-# ENVIRONMENT & SECRETS
-# ==========================================
-
-# Environment files (contains sensitive data)
+# Environment files
 .env
 .env.local
 .env.development
@@ -49,11 +42,7 @@ google-credentials.json
 aws-credentials.json
 firebase-config.json
 
-# ==========================================
-# NODE.JS & NPM
-# ==========================================
-
-# Dependencies (auto-generated, large, and can be recreated)
+# Node Dependencies 
 node_modules/
 */node_modules/
 **/node_modules/
@@ -107,11 +96,9 @@ bower_components
 # Dependency directories
 jspm_packages/
 
-# ==========================================
-# REACT & FRONTEND BUILD FILES
-# ==========================================
 
-# Build outputs (generated files)
+
+# React Build outputs (generated files)
 build/
 dist/
 out/
@@ -125,7 +112,6 @@ frontend/.next/
 frontend/out/
 
 # Static site generators
-# Note: frontend/public/ should NOT be ignored (contains index.html)
 .cache/
 .parcel-cache/
 
@@ -139,10 +125,6 @@ workbox-*.js
 
 # Bundle analyzer reports
 bundle-analyzer-report.html
-
-# ==========================================
-# PYTHON & ML SERVICE
-# ==========================================
 
 # Python bytecode (compiled files)
 __pycache__/
@@ -230,10 +212,8 @@ ml-service/data/
 ml-service/datasets/
 ml-service/trained_models/
 
-# ==========================================
-# DATABASE FILES
-# ==========================================
 
+# DB-related:
 # Local database files
 *.sqlite
 *.sqlite3
@@ -246,10 +226,6 @@ ml-service/trained_models/
 # MongoDB local data
 database/data/
 database/logs/
-
-# ==========================================
-# LOGS & TEMPORARY FILES
-# ==========================================
 
 # Log files
 *.log
@@ -272,10 +248,6 @@ temp/
 *.tmp
 *.bak
 *.backup
-
-# ==========================================
-# DEVELOPMENT TOOLS & IDEs
-# ==========================================
 
 # VS Code
 .vscode/
@@ -310,11 +282,8 @@ tramp
 *.sln
 *.sw?
 
-# ==========================================
-# OPERATING SYSTEM FILES
-# ==========================================
 
-# Windows
+#OS system files: Windows
 Thumbs.db
 ehthumbs.db
 Desktop.ini
@@ -325,7 +294,7 @@ $RECYCLE.BIN/
 *.msp
 *.lnk
 
-# macOS
+#macOS
 .DS_Store
 .AppleDouble
 .LSOverride
@@ -349,26 +318,22 @@ Temporary Items
 .directory
 .Trash-*
 .nfs*
-
-# ==========================================
-# DEPLOYMENT & CI/CD
-# ==========================================
-
+# Files required for deployment
 # Docker override files
-docker-compose.override.yml
+# docker-compose.override.yml
 
 # Deployment directories
-deployment/
-.serverless/
+# deployment/
+# .serverless/
 
 # Terraform
-*.tfstate
-*.tfstate.*
-.terraform/
-.terraform.lock.hcl
+# *.tfstate
+# *.tfstate.*
+# .terraform/
+# .terraform.lock.hcl
 
-# Kubernetes
-*.kubeconfig
+# # Kubernetes
+# *.kubeconfig
 
 # Build artifacts
 *.tar.gz
@@ -380,9 +345,6 @@ deployment/
 *.iso
 *.jar
 
-# ==========================================
-# TESTING
-# ==========================================
 
 # Test results and coverage
 test-results/
@@ -397,10 +359,6 @@ jest.config.js.bak
 playwright-report/
 playwright/.cache/
 
-# ==========================================
-# USER UPLOADS & MEDIA
-# ==========================================
-
 # User uploaded content (might contain sensitive data)
 uploads/
 media/
@@ -408,11 +366,7 @@ static/media/
 backend/uploads/
 backend/public/uploads/
 
-# ==========================================
-# MISCELLANEOUS
-# ==========================================
-
-# Performance monitoring
+# misc. Performance monitoring
 .lighthouse/
 
 # Backup files
@@ -428,10 +382,6 @@ dev/
 # Generated documentation
 docs/build/
 docs/_build/
-
-# ==========================================
-# ADDITIONAL CONFIG FILES TO IGNORE
-# ==========================================
 
 # Package manager files (can be regenerated)
 package.json
@@ -471,11 +421,6 @@ configure.sh
 
 # Project specific config
 .gitattributes
-
-# ==========================================
-# KEEP THESE IMPORTANT FILES
-# (Explicitly not ignored)
-# ==========================================
 
 # Example/template files (safe to share)
 !*.example
