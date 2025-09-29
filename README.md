@@ -17,7 +17,7 @@ A comprehensive social finance platform inspired from subreddits from reddit app
 - **Investment Clubs** - Join communities of like-minded investors
 - **Group Challenges** - Gamified savings and investment challenges
 - **Financial Reels** - Short-form educational content
-- **Achievement System** - Badges and rewards for financial milestones
+- **Stock & Crypto News** - Up-to-date news regarding cryptocurrency and NSE(National Stock Exhange)
 
 ### AI-Powered Insights
 - **Financial Chatbot** - Text-based assistant for instant query responses
@@ -98,6 +98,10 @@ A comprehensive social finance platform inspired from subreddits from reddit app
 - Voice/text queries: "How much did I spend on food this week?"
 - In-chat responses with shareable results
 
+### 5. Latest updates for crypto and stockss
+- Up-to-date news for cryptocurrency 
+- Daily news from the NSE (National Stock Exchange)
+
 ## Social Layer Features
 - **Profiles**: Show savings streaks, badges, milestones
 - **Feed**: Milestones, challenges, reels, expert advice
@@ -108,11 +112,12 @@ A comprehensive social finance platform inspired from subreddits from reddit app
 
 ## Project Structure
 ```
-├── frontend/          # React frontend application
-├── backend/           # Node.js Express API server
-├── ml-service/        # Python ML service for predictions
-├── database/          # Database schemas and migrations
-└── docs/             # Documentation and API specs
+Project FinFluence
+├── frontend/               # React frontend application
+├── backend/                # Node.js Express API server
+├── ml-service/             # Python ML service for predictions
+├── database/               # Database schemas and migrations
+└── docs/                   # Documentation and API specs
 ```
 
 ### Prerequisites
