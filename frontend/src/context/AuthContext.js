@@ -1,9 +1,20 @@
+/**
+ * Authentication Context for FinFluence Application
+ * Handles user authentication, login, logout, and user state management
+ */
+
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import api from '../utils/api';
 import toast from 'react-hot-toast';
 
+// Create Authentication Context
 const AuthContext = createContext();
 
+/**
+ * Custom hook to use authentication context
+ * @returns {Object} Authentication context value
+ * @throws {Error} If used outside of AuthProvider
+ */
 export const useAuth = () => {
   const context = useContext(AuthContext);
   if (!context) {

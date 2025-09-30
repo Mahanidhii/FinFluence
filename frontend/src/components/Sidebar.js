@@ -1,3 +1,8 @@
+/**
+ * Sidebar Component - Fixed left navigation panel
+ * Provides navigation links to all main sections of the application
+ */
+
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { 
@@ -16,14 +21,15 @@ import {
 const Sidebar = () => {
   const location = useLocation();
 
+  // Navigation menu items with routes and icons
   const navigation = [
-    { name: 'Feed', href: '/feed', icon: Home },
-    { name: 'My Finance', href: '/dashboard', icon: PieChart },
-    { name: 'Groups', href: '/groups', icon: Users },
-    { name: 'Challenges', href: '/challenges', icon: Trophy },
-    { name: 'Assistant', href: '/assistant', icon: MessageCircle },
-    { name: 'Stock News', href: '/stock-news', icon: Newspaper },
-    { name: 'Crypto News', href: '/crypto-news', icon: Bitcoin },
+    { name: 'Feed', href: '/feed', icon: Home },              // Social feed
+    { name: 'My Finance', href: '/dashboard', icon: PieChart }, // Personal dashboard
+    { name: 'Groups', href: '/groups', icon: Users },          // Investment groups
+    { name: 'Challenges', href: '/challenges', icon: Trophy }, // Financial challenges
+    { name: 'Assistant', href: '/assistant', icon: MessageCircle }, // AI chatbot
+    { name: 'Stock News', href: '/stock-news', icon: Newspaper },   // Stock market news
+    { name: 'Crypto News', href: '/crypto-news', icon: Bitcoin },   // Cryptocurrency news
   ];
 
   const isActive = (href) => location.pathname === href;
