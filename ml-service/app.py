@@ -1,19 +1,37 @@
+"""
+FinFluence ML Service
+A Flask-based machine learning service for financial predictions and chatbot functionality.
+
+Features:
+- Expense prediction using Random Forest
+- Financial chatbot with NLP
+- Investment insights generation
+"""
+
+# Flask and API Dependencies
 from flask import Flask, request, jsonify
 from flask_cors import CORS
+
+# Data Processing Libraries
 import numpy as np
 import pandas as pd
 from datetime import datetime, timedelta
 import joblib
 import os
 import re
+
+# Machine Learning Libraries
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.linear_model import LinearRegression
 from sklearn.preprocessing import StandardScaler
+
+# Suppress sklearn warnings for cleaner output
 import warnings
 warnings.filterwarnings('ignore')
 
+# Initialize Flask Application
 app = Flask(__name__)
-CORS(app)
+CORS(app)  # Enable Cross-Origin Resource Sharing
 
 class ExpensePredictionModel:
     def __init__(self):
