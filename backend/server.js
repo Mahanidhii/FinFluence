@@ -1,13 +1,21 @@
+/**
+ * FinFluence Backend Server
+ * A social finance platform API built with Express.js and MongoDB
+ */
+
+// Core Dependencies
 const express = require('express');
 const mongoose = require('mongoose');
+require('dotenv').config();
+
+// Security & Performance Middleware
 const cors = require('cors');
 const helmet = require('helmet');
 const compression = require('compression');
 const morgan = require('morgan');
 const rateLimit = require('express-rate-limit');
-require('dotenv').config();
 
-// Import routes
+// Route Handlers
 const authRoutes = require('./src/routes/auth');
 const userRoutes = require('./src/routes/users');
 const postRoutes = require('./src/routes/posts');
@@ -17,37 +25,46 @@ const expenseRoutes = require('./src/routes/expenses');
 const financeRoutes = require('./src/routes/finance');
 const chatbotRoutes = require('./src/routes/chatbot');
 
-// Import middleware
+// Custom Middleware
 const errorHandler = require('./src/middleware/errorHandler');
 
+// Initialize Express Application
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-// Trust proxy for rate limiting
+// ====================
+// MIDDLEWARE SETUP
+// ====================
+
+// Trust proxy for accurate client IP (required for rate limiting)
 app.set('trust proxy', 1);
 
-// Rate limiting
+// Rate Limiting Configuration
 const limiter = rateLimit({
-  windowMs: (process.env.RATE_LIMIT_WINDOW || 15) * 60 * 1000, // 15 minutes
-  max: process.env.RATE_LIMIT_MAX || 100, // limit each IP to 100 requests per windowMs
+  windowMs: (process.env.RATE_LIMIT_WINDOW || 15) * 60 * 1000, // 15 minutes default
+  max: process.env.RATE_LIMIT_MAX || 100, // Max requests per window
   message: {
     error: 'Too many requests from this IP, please try again later.'
   }
 });
 
-// Middleware
-app.use(helmet());
-app.use(compression());
-app.use(morgan('combined'));
-app.use(limiter);
+// Security Middleware
+app.use(helmet()); // Security headers
+app.use(compression()); // Response compression
+app.use(morgan('combined')); // HTTP request logging
+app.use(limiter); // Apply rate limiting
+
+// CORS Configuration
 app.use(cors({
   origin: process.env.NODE_ENV === 'production' 
-    ? ['https://your-domain.com'] 
-    : ['http://localhost:3000'],
+    ? ['https://your-domain.com'] // Replace with actual production domain
+    : ['http://localhost:3000'], // Development frontend URL
   credentials: true
 }));
-app.use(express.json({ limit: '10mb' }));
-app.use(express.urlencoded({ extended: true }));
+
+// Body Parsing Middleware
+app.use(express.json({ limit: '10mb' })); // JSON body parser with size limit
+app.use(express.urlencoded({ extended: true })); // URL-encoded body parser
 
 // Static files (for uploaded images)
 app.use('/uploads', express.static('uploads'));
