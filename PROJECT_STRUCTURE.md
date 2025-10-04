@@ -19,7 +19,7 @@ FinFluence/
 │   │   ├── 📁 components/        # Reusable React components
 │   │   ├── 📁 context/           # React Context providers
 │   │   ├── 📁 pages/             # Page components
-│   │   ├── 📁 services/          # API service functions
+│   │   ├── 📁 services/          # API service functions (OPTIONAL, NOT INCLUDED IN THIS PROJECT)
 │   │   ├── 📁 utils/             # Utility functions
 │   │   ├── 📄 App.js             # Main App component
 │   │   ├── 📄 index.js           # React DOM entry point
