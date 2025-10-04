@@ -53,7 +53,7 @@ FinFluence/
 └── 📄 setup.sh                   # Unix setup script
 ```
 
-## 🔍 Key Directories Explained
+## Key Directories
 
 ### `/backend/src/`
 - **`controllers/`** - Business logic handlers for API routes
@@ -73,7 +73,7 @@ FinFluence/
 - **`requirements.txt`** - Python dependencies (scikit-learn, Flask, etc.)
 - **`.venv/`** - Isolated Python environment
 
-## 🚀 Service Architecture
+## Service Architecture
 
 ```
 ┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
@@ -85,12 +85,12 @@ FinFluence/
          │                       │                       │
          ▼                       ▼                       ▼
 ┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
-│   Browser       │    │   MongoDB       │    │   ML Models     │
-│   (User)        │    │   (Database)    │    │   (Predictions) │
+│     Browser     │    │     MongoDB     │    │    ML Model     │
+│     (User)      │    │    (Database)   │    │  (Prediction)   │
 └─────────────────┘    └─────────────────┘    └─────────────────┘
 ```
 
-## 📦 Environment Files
+## Environment Files (env/venv)
 
 Each service has its own environment configuration:
 
@@ -98,14 +98,14 @@ Each service has its own environment configuration:
 - **`frontend/.env`** - API endpoints, feature flags
 - **`ml-service/.env`** - Model configurations, external APIs
 
-## 🔐 Security Notes
+## Security Notes
 
 - All `.env` files are gitignored
 - Use `.env.example` files as templates
 - Never commit sensitive credentials
 - Environment variables are loaded at startup
 
-## 🛠️ Development Workflow
+## Development Workflow
 
 1. **Setup**: Run setup scripts (`setup.bat` or `setup.sh`)
 2. **Development**: Start all three services simultaneously
@@ -113,8 +113,8 @@ Each service has its own environment configuration:
 4. **Deployment**: Services can be deployed separately or together
 
 This structure promotes:
-- ✅ **Separation of concerns**
-- ✅ **Scalable architecture**
-- ✅ **Independent development**
-- ✅ **Easy maintenance**
-- ✅ **Clear organization**
+- **Separation of concerns**
+- **Scalable architecture**
+- **Independent development**
+- **Easy maintenance**
+- **Clear organization**
