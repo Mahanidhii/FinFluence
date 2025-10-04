@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Trophy, Calendar, Users, Target, Plus, Timer } from 'lucide-react';
+import { Trophy, Calendar, Users, Target, Plus, Timer, Crown } from 'lucide-react';
 
 const Challenges = () => {
   const [activeTab, setActiveTab] = useState('available');

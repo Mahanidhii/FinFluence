@@ -45,10 +45,6 @@ const Register = () => {
       newErrors.firstName = 'First name is required';
     }
 
-    if (!formData.lastName.trim()) {
-      newErrors.lastName = 'Last name is required';
-    }
-
     if (!formData.email.trim()) {
       newErrors.email = 'Email is required';
     } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
@@ -65,10 +61,6 @@ const Register = () => {
 
     if (formData.password !== formData.confirmPassword) {
       newErrors.confirmPassword = 'Passwords do not match';
-    }
-
-    if (!formData.dateOfBirth) {
-      newErrors.dateOfBirth = 'Date of birth is required';
     }
 
     if (!formData.agreeToTerms) {
@@ -140,21 +132,17 @@ const Register = () => {
 
                 <div>
                   <label htmlFor="lastName" className="block text-sm font-medium text-gray-700">
-                    Last Name
+                    Last Name <span className="text-gray-400 text-xs font-normal">(optional)</span>
                   </label>
                   <input
                     id="lastName"
                     name="lastName"
                     type="text"
-                    required
-                    className={`input-field mt-1 ${errors.lastName ? 'border-red-500' : ''}`}
+                    className="input-field mt-1"
                     placeholder="Last name"
                     value={formData.lastName}
                     onChange={handleChange}
                   />
-                  {errors.lastName && (
-                    <p className="mt-1 text-sm text-red-600">{errors.lastName}</p>
-                  )}
                 </div>
               </div>
 
@@ -182,7 +170,7 @@ const Register = () => {
               {/* Phone Number */}
               <div>
                 <label htmlFor="phoneNumber" className="block text-sm font-medium text-gray-700">
-                  Phone Number
+                  Phone Number <span className="text-gray-400 text-xs font-normal">(optional)</span>
                 </label>
                 <input
                   id="phoneNumber"
@@ -198,20 +186,16 @@ const Register = () => {
               {/* Date of Birth */}
               <div>
                 <label htmlFor="dateOfBirth" className="block text-sm font-medium text-gray-700">
-                  Date of Birth
+                  Date of Birth <span className="text-gray-400 text-xs font-normal">(optional)</span>
                 </label>
                 <input
                   id="dateOfBirth"
                   name="dateOfBirth"
                   type="date"
-                  required
-                  className={`input-field mt-1 ${errors.dateOfBirth ? 'border-red-500' : ''}`}
+                  className="input-field mt-1"
                   value={formData.dateOfBirth}
                   onChange={handleChange}
                 />
-                {errors.dateOfBirth && (
-                  <p className="mt-1 text-sm text-red-600">{errors.dateOfBirth}</p>
-                )}
               </div>
 
               {/* Password */}

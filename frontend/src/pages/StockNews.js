@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { TrendingUp, TrendingDown, ExternalLink, Clock, DollarSign } from 'lucide-react';
+import { TrendingUp, TrendingDown, ExternalLink, Clock, DollarSign, Newspaper } from 'lucide-react';
 
 const StockNews = () => {
   const [news, setNews] = useState([]);
