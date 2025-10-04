@@ -14,7 +14,7 @@ const { auth } = require('../middleware/auth');
 const router = express.Router();
 
 // @route   POST /api/auth/register
-// @desc    Register new user
+// @desc    Register new user  
 // @access  Public
 router.post('/register', [
   body('firstName')
@@ -25,7 +25,7 @@ router.post('/register', [
     .withMessage('First name must be between 2 and 30 characters'),
   
   body('lastName')
-    .optional()
+    .optional({ checkFalsy: true })
     .trim()
     .isLength({ min: 2, max: 30 })
     .withMessage('Last name must be between 2 and 30 characters'),
@@ -42,12 +42,12 @@ router.post('/register', [
     .withMessage('Password must contain at least one lowercase letter, one uppercase letter, and one number'),
   
   body('phoneNumber')
-    .optional()
+    .optional({ checkFalsy: true })
     .isMobilePhone('any')
     .withMessage('Please provide a valid phone number'),
   
   body('dateOfBirth')
-    .optional()
+    .optional({ checkFalsy: true })
     .isISO8601()
     .withMessage('Please provide a valid date of birth')
 ], register);
