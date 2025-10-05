@@ -1,14 +1,23 @@
 const express = require('express');
 const { auth } = require('../middleware/auth');
+const groqService = require('../services/groqService');
+const financialDataService = require('../services/financialDataService');
 
 const router = express.Router();
 
 // @route   POST /api/chatbot/query
-// @desc    Process chatbot query and return response
+// @desc    Process chatbot query and return AI response
 // @access  Private
-router.post('/query', auth, (req, res) => {
+router.post('/query', auth, async (req, res) => {
   try {
-    const { query } = req.body;
+    const { query, conversationHistory = [] } = req.body;
+    const userId = req.user.id;
+    
+    console.log('💬 Chatbot Query Received:', {
+      userId: userId,
+      query: query?.substring(0, 100) + '...',
+      historyLength: conversationHistory.length
+    });
     
     if (!query || !query.trim()) {
       return res.status(400).json({
@@ -17,15 +26,48 @@ router.post('/query', auth, (req, res) => {
       });
     }
 
-    // Generate response based on query
-    const response = generateFinancialResponse(query);
+    // Get user's financial context
+    console.log('📊 Fetching user financial context...');
+    const userContext = await financialDataService.getUserFinancialContext(userId);
+    console.log('✅ User context retrieved:', {
+      hasUser: !!userContext.user,
+      expensesCount: userContext.expenses?.length || 0,
+      investmentsCount: userContext.investments?.length || 0
+    });
+    
+    let aiResponse;
+    let fallbackUsed = false;
+
+    try {
+      console.log('🤖 Attempting GROQ AI response...');
+      // Try to get AI response from GROQ
+      aiResponse = await groqService.generateFinancialResponse(
+        query, 
+        userContext, 
+        conversationHistory
+      );
+      console.log('✅ GROQ AI response successful');
+    } catch (groqError) {
+      console.warn('❌ GROQ API failed, using fallback:', groqError.message);
+      
+      // Fallback to template-based response
+      aiResponse = generateFallbackResponse(query, userContext);
+      fallbackUsed = true;
+      console.log('🔄 Using fallback response');
+    }
+
+    // Generate suggestions based on context
+    const suggestions = generateContextualSuggestions(query, userContext);
     
     res.json({
       success: true,
       response: {
-        content: response.content,
-        data: response.data,
-        suggestions: response.suggestions
+        content: aiResponse,
+        suggestions,
+        context: {
+          hasData: !!userContext.user,
+          fallbackUsed
+        }
       }
     });
 
@@ -39,27 +81,240 @@ router.post('/query', auth, (req, res) => {
 });
 
 // @route   GET /api/chatbot/suggestions
-// @desc    Get suggested queries for the user
+// @desc    Get personalized suggested queries for the user
 // @access  Private
-router.get('/suggestions', auth, (req, res) => {
-  const suggestions = [
-    "How much did I spend on food this week?",
-    "What's my investment portfolio performance?",
-    "How much did I invest in ETFs this month?",
-    "Show me my savings goal progress",
-    "What are my biggest expenses?",
-    "How much money is in my round-up savings?",
-    "What's my current budget status?",
-    "Show me my expense breakdown by category"
-  ];
-
-  res.json({
-    success: true,
-    suggestions
-  });
+router.get('/suggestions', auth, async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const userContext = await financialDataService.getUserFinancialContext(userId);
+    
+    const suggestions = generatePersonalizedSuggestions(userContext);
+    
+    res.json({
+      success: true,
+      suggestions
+    });
+  } catch (error) {
+    console.error('Error getting suggestions:', error);
+    
+    // Fallback suggestions
+    const defaultSuggestions = [
+      "How much did I spend this month?",
+      "What's my investment portfolio performance?",
+      "Show me my savings progress",
+      "Give me expense breakdown by category",
+      "How can I reduce my spending?",
+      "What are some investment tips?",
+      "Help me plan my budget",
+      "Show me my financial trends"
+    ];
+    
+    res.json({
+      success: true,
+      suggestions: defaultSuggestions
+    });
+  }
 });
 
-// Generate financial response based on query
+// @route   POST /api/chatbot/insights
+// @desc    Get AI-powered financial insights
+// @access  Private
+router.post('/insights', auth, async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const userContext = await financialDataService.getUserFinancialContext(userId);
+    
+    const insights = await groqService.generateInsights(userContext);
+    
+    res.json({
+      success: true,
+      insights,
+      context: userContext.summary
+    });
+  } catch (error) {
+    console.error('Error generating insights:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to generate insights'
+    });
+  }
+});
+
+// @route   GET /api/chatbot/health
+// @desc    Check GROQ service health
+// @access  Private
+router.get('/health', auth, async (req, res) => {
+  try {
+    console.log('🏥 Health check requested...');
+    const isHealthy = await groqService.healthCheck();
+    
+    res.json({
+      success: true,
+      groqHealthy: isHealthy,
+      apiKeyPresent: !!process.env.GROQ_API_KEY,
+      timestamp: new Date().toISOString()
+    });
+  } catch (error) {
+    res.json({
+      success: true,
+      groqHealthy: false,
+      error: error.message,
+      apiKeyPresent: !!process.env.GROQ_API_KEY,
+      timestamp: new Date().toISOString()
+    });
+  }
+});
+
+// @route   POST /api/chatbot/test
+// @desc    Test GROQ API directly
+// @access  Private
+router.post('/test', auth, async (req, res) => {
+  try {
+    console.log('🧪 Direct GROQ test requested...');
+    
+    const testResponse = await groqService.groq.chat.completions.create({
+      messages: [
+        { role: 'system', content: 'You are a helpful assistant.' },
+        { role: 'user', content: 'Say hello and confirm you are working.' }
+      ],
+      model: 'llama3-8b-8192',
+      max_tokens: 50
+    });
+
+    const content = testResponse.choices[0]?.message?.content || 'No response';
+    
+    res.json({
+      success: true,
+      testResponse: content,
+      model: 'llama3-8b-8192',
+      timestamp: new Date().toISOString()
+    });
+    
+  } catch (error) {
+    console.error('🧪 Direct GROQ test failed:', error);
+    res.status(500).json({
+      success: false,
+      error: error.message,
+      details: {
+        status: error.status,
+        code: error.code,
+        type: error.type
+      },
+      timestamp: new Date().toISOString()
+    });
+  }
+});
+
+/**
+ * Generate fallback response when GROQ API fails
+ */
+function generateFallbackResponse(query, userContext) {
+  const lowerQuery = query.toLowerCase();
+  const { summary } = userContext;
+  
+  if (lowerQuery.includes('spend') || lowerQuery.includes('expense')) {
+    return `Based on your recent activity, you've spent ₹${summary.monthlyExpenses?.toLocaleString() || 0} this month. Your top expense category is ${summary.topExpenseCategory?.category || 'Food'} with ₹${summary.topExpenseCategory?.amount?.toLocaleString() || 0}. Would you like me to help you analyze your spending patterns?`;
+  }
+  
+  if (lowerQuery.includes('invest') || lowerQuery.includes('portfolio')) {
+    return `Your investment portfolio is currently valued at ₹${summary.portfolioValue?.toLocaleString() || '0'} with a growth of ${summary.investmentGrowth?.toFixed(1) || '0'}%. Your investments are performing well! Would you like specific advice on rebalancing or new investment opportunities?`;
+  }
+  
+  if (lowerQuery.includes('save') || lowerQuery.includes('saving')) {
+    return `You have ₹${summary.savingsTotal?.toLocaleString() || '0'} in savings. You're doing great! I can help you optimize your savings strategy or set up new financial goals. What specific savings goal would you like to work on?`;
+  }
+  
+  if (lowerQuery.includes('budget')) {
+    return `You've used ${summary.budgetUsed?.toFixed(1) || '0'}% of your monthly budget. ${summary.budgetUsed > 80 ? 'You might want to watch your spending for the rest of the month.' : 'You\'re doing well with your budget!'} Would you like tips on budget optimization?`;
+  }
+  
+  return `I'm here to help you with your finances! You've spent ₹${summary.monthlyExpenses?.toLocaleString() || '0'} this month and have ₹${summary.portfolioValue?.toLocaleString() || '0'} in investments. What specific financial question can I help you with?`;
+}
+
+/**
+ * Generate contextual suggestions based on user data
+ */
+function generateContextualSuggestions(query, userContext) {
+  const { summary } = userContext;
+  const suggestions = [];
+  
+  // Budget-related suggestions
+  if (summary.budgetUsed > 80) {
+    suggestions.push("How can I reduce my spending this month?");
+    suggestions.push("Show me my biggest expenses");
+  } else {
+    suggestions.push("How much budget do I have left?");
+  }
+  
+  // Investment suggestions
+  if (summary.portfolioValue > 0) {
+    suggestions.push("How is my portfolio performing?");
+    suggestions.push("Should I rebalance my investments?");
+  } else {
+    suggestions.push("How should I start investing?");
+    suggestions.push("What are good investment options for beginners?");
+  }
+  
+  // Savings suggestions
+  if (summary.savingsTotal > 0) {
+    suggestions.push("How can I increase my savings rate?");
+    suggestions.push("Show me my savings progress");
+  } else {
+    suggestions.push("Help me start a savings plan");
+  }
+  
+  // Expense analysis
+  suggestions.push(`Analyze my ${summary.topExpenseCategory?.category?.toLowerCase() || 'food'} expenses`);
+  suggestions.push("Compare this month with last month");
+  
+  return suggestions.slice(0, 6); // Return top 6 suggestions
+}
+
+/**
+ * Generate personalized suggestions based on user context
+ */
+function generatePersonalizedSuggestions(userContext) {
+  const suggestions = [];
+  const { summary, expenses, savings, budget } = userContext;
+  
+  // Expense-based suggestions
+  if (summary.monthlyExpenses > 0) {
+    suggestions.push(`I spent ₹${summary.monthlyExpenses.toLocaleString()} this month - is that good?`);
+    suggestions.push(`Help me reduce my ${summary.topExpenseCategory?.category?.toLowerCase() || 'food'} expenses`);
+  }
+  
+  // Investment suggestions
+  if (summary.portfolioValue > 0) {
+    suggestions.push("How is my investment portfolio doing?");
+    suggestions.push("Should I invest more this month?");
+  } else {
+    suggestions.push("I want to start investing - where should I begin?");
+  }
+  
+  // Budget suggestions
+  if (budget && summary.budgetUsed) {
+    if (summary.budgetUsed > 90) {
+      suggestions.push("I'm over budget! What should I do?");
+    } else {
+      suggestions.push("How much budget do I have left?");
+    }
+  }
+  
+  // Savings suggestions
+  if (savings) {
+    suggestions.push("How can I save more money?");
+    suggestions.push("Show me my savings goals progress");
+  }
+  
+  // General financial health
+  suggestions.push("Give me a financial health checkup");
+  suggestions.push("What should I focus on this month?");
+  suggestions.push("Help me plan for next month");
+  
+  return suggestions.slice(0, 8);
+}
+
+// Legacy function - keeping for backward compatibility
 const generateFinancialResponse = (query) => {
   const lowerQuery = query.toLowerCase();
   

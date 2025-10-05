@@ -6,7 +6,7 @@ const FinancialChatbot = () => {
     {
       id: 1,
       type: 'bot',
-      content: "Hi! I'm your financial assistant. I can help you track expenses, investments, savings, and answer questions about your financial data. What would you like to know?",
+      content: "Hello! 👋 I'm FinFluence AI, your intelligent financial assistant powered by advanced AI. I analyze your actual financial data to provide personalized insights, budgeting advice, investment recommendations, and spending analysis. Ask me anything about your finances - I'm here to help you make smarter money decisions!",
       timestamp: new Date()
     }
   ]);
@@ -22,6 +22,32 @@ const FinancialChatbot = () => {
     scrollToBottom();
   }, [messages]);
 
+  // Load personalized suggestions on component mount
+  useEffect(() => {
+    const loadSuggestions = async () => {
+      try {
+        const token = localStorage.getItem('token');
+        const response = await fetch('/api/chatbot/suggestions', {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+        
+        if (response.ok) {
+          const data = await response.json();
+          if (data.success && data.suggestions) {
+            setQuickQuestions(data.suggestions.slice(0, 6));
+          }
+        }
+      } catch (error) {
+        console.log('Could not load personalized suggestions:', error);
+        // Keep default suggestions
+      }
+    };
+
+    loadSuggestions();
+  }, []);
+
   const generateResponse = async (query) => {
     try {
       // Get auth token
@@ -33,12 +59,20 @@ const FinancialChatbot = () => {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${token}`
         },
-        body: JSON.stringify({ query })
+        body: JSON.stringify({ 
+          query,
+          conversationHistory: messages.slice(-10) // Send last 10 messages for context
+        })
       });
 
       const data = await response.json();
       
       if (data.success) {
+        // Update quick questions with contextual suggestions
+        if (data.response.suggestions && data.response.suggestions.length > 0) {
+          setQuickQuestions(data.response.suggestions);
+        }
+        
         return data.response.content;
       } else {
         return "I'm having trouble processing your request right now. Please try again later.";
@@ -46,21 +80,39 @@ const FinancialChatbot = () => {
     } catch (error) {
       console.error('Chatbot API error:', error);
       
-      // Fallback to local responses
-      const lowerQuery = query.toLowerCase();
-      
-      if (lowerQuery.includes('food') && lowerQuery.includes('week')) {
-        return "This week you spent ₹1,250 on food. Breakdown: Zomato ₹450, Groceries ₹600, Cafe visits ₹200. This is 15% higher than last week.";
-      } else if (lowerQuery.includes('gold') || lowerQuery.includes('etf')) {
-        return "Your ETF investments this month: Gold ETFs ₹8,500, Other ETFs ₹12,000. Total ETF portfolio value: ₹85,600 (+5.2% this month).";
-      } else if (lowerQuery.includes('savings')) {
-        return "Total savings: ₹1,24,500 (+12% from last month). You're on a 15-day savings streak! Goal progress: 80% complete.";
-      } else if (lowerQuery.includes('expense') || lowerQuery.includes('spend')) {
-        return "Total expenses this month: ₹18,420. Food (35%), Transport (25%), Entertainment (20%), Shopping (15%), Others (5%).";
-      } else {
-        return "I can help you with expenses, investments, savings, budgets, and financial goals. What specific information do you need?";
-      }
+      // Enhanced fallback responses
+      return getEnhancedFallbackResponse(query);
     }
+  };
+
+  const getEnhancedFallbackResponse = (query) => {
+    const lowerQuery = query.toLowerCase();
+    
+    if (lowerQuery.includes('hello') || lowerQuery.includes('hi') || lowerQuery.includes('hey')) {
+      return "Hello! 👋 I'm your AI financial assistant. I can help you track expenses, analyze investments, plan budgets, and give personalized financial advice. What would you like to know about your finances?";
+    }
+    
+    if (lowerQuery.includes('help') || lowerQuery.includes('what can you do')) {
+      return "I can help you with:\n\n💰 **Expense Analysis** - Track and categorize your spending\n📈 **Investment Insights** - Portfolio performance and recommendations\n🎯 **Budget Planning** - Monitor your monthly budget and goals\n💡 **Financial Tips** - Personalized advice for better money management\n\nJust ask me anything about your finances!";
+    }
+    
+    if (lowerQuery.includes('spend') || lowerQuery.includes('expense')) {
+      return "I'd love to analyze your spending patterns! Based on typical user data, I can help you:\n\n• Identify your top expense categories\n• Compare monthly spending trends\n• Find opportunities to save money\n• Set realistic budget limits\n\nWhat specific expenses would you like me to look at?";
+    }
+    
+    if (lowerQuery.includes('invest') || lowerQuery.includes('portfolio') || lowerQuery.includes('stock')) {
+      return "Investment analysis is one of my specialties! 📊 I can help you:\n\n• Review your portfolio performance\n• Suggest investment diversification\n• Analyze risk vs returns\n• Recommend investment strategies\n\nWould you like me to look at your current investments or help you start investing?";
+    }
+    
+    if (lowerQuery.includes('save') || lowerQuery.includes('saving')) {
+      return "Savings planning is crucial for financial health! 🏦 I can assist with:\n\n• Setting realistic savings goals\n• Automating your savings strategy\n• Optimizing your savings rate\n• Tracking progress toward goals\n\nWhat's your current savings goal or what would you like to save for?";
+    }
+    
+    if (lowerQuery.includes('budget')) {
+      return "Budget management made easy! 📋 I can help you:\n\n• Create a personalized budget\n• Track spending vs budget limits\n• Adjust categories based on habits\n• Get alerts when approaching limits\n\nWould you like me to review your current budget or help create a new one?";
+    }
+    
+    return "I'm your intelligent financial assistant powered by AI! 🤖 I analyze your actual financial data to provide personalized insights and advice. Ask me about your expenses, investments, savings, budgets, or any financial planning questions. What would you like to explore first?";
   };
 
   const handleSendMessage = () => {
@@ -98,13 +150,14 @@ const FinancialChatbot = () => {
     }
   };
 
-  const quickQuestions = [
-    "How much did I spend on food this week?",
-    "What's my investment portfolio performance?",
-    "How much did I invest in ETFs this month?",
-    "Show me my savings goal progress",
-    "What are my biggest expenses?"
-  ];
+  const [quickQuestions, setQuickQuestions] = useState([
+    "Analyze my spending patterns this month",
+    "How is my investment portfolio performing?",
+    "Give me personalized savings advice",
+    "What should I focus on financially?",
+    "Help me optimize my budget",
+    "Show me my financial health overview"
+  ]);
 
   const handleQuickQuestion = (question) => {
     setInputMessage(question);

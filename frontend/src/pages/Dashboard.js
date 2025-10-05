@@ -65,9 +65,9 @@ const Dashboard = () => {
     setCurrentQuery('');
     setIsTyping(true);
     
-    // Mock AI response based on query
-    setTimeout(() => {
-      const response = generateMockResponse(currentQuery);
+    // Get AI response
+    try {
+      const response = await generateAIResponse(currentQuery);
       const botMessage = {
         id: Date.now() + 1,
         type: 'bot',
@@ -77,25 +77,69 @@ const Dashboard = () => {
       
       setChatMessages(prev => [...prev, botMessage]);
       setIsTyping(false);
-    }, 1500);
+    } catch (error) {
+      console.error('Error getting AI response:', error);
+      const errorMessage = {
+        id: Date.now() + 1,
+        type: 'bot',
+        content: "I'm having trouble right now, but I'm still here to help! Try asking about your expenses, investments, or savings.",
+        timestamp: new Date()
+      };
+      
+      setChatMessages(prev => [...prev, errorMessage]);
+      setIsTyping(false);
+    }
   };
 
-  const generateMockResponse = (query) => {
+  const generateAIResponse = async (query) => {
+    try {
+      const token = localStorage.getItem('token');
+      
+      const response = await fetch('/api/chatbot/query', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({ 
+          query,
+          conversationHistory: chatMessages.slice(-10)
+        })
+      });
+
+      const data = await response.json();
+      
+      if (data.success) {
+        return data.response.content;
+      } else {
+        return "I'm having trouble processing your request right now. Please try again later.";
+      }
+    } catch (error) {
+      console.error('Dashboard chatbot error:', error);
+      return getDashboardFallbackResponse(query);
+    }
+  };
+
+  const getDashboardFallbackResponse = (query) => {
     const lowerQuery = query.toLowerCase();
     
-    if (lowerQuery.includes('food') && lowerQuery.includes('week')) {
-      return "You spent ₹1,250 on food this week, which is 15% higher than last week. Your top expenses were: Zomato (₹450), Groceries (₹600), and Cafe visits (₹200).";
-    } else if (lowerQuery.includes('gold') || lowerQuery.includes('etf')) {
-      return "This month you invested ₹8,500 in Gold ETFs and ₹12,000 in other ETFs. Your total ETF portfolio is now worth ₹85,600 with a 5.2% gain.";
-    } else if (lowerQuery.includes('savings') || lowerQuery.includes('save')) {
-      return "Your total savings stand at ₹1,24,500. You've maintained a 15-day savings streak! Your round-up savings have accumulated ₹2,340 this month.";
-    } else if (lowerQuery.includes('investment') || lowerQuery.includes('invest')) {
-      return "Your total investment portfolio is valued at ₹85,600. Top performers: Reliance (+2.4%), HDFC Bank (+1.8%). You've invested ₹20,500 this month across stocks and mutual funds.";
-    } else if (lowerQuery.includes('expense') || lowerQuery.includes('spend')) {
-      return "Your expenses this month total ₹18,420. Breakdown: Food (₹6,500), Transport (₹4,600), Entertainment (₹3,700), Shopping (₹2,800), Others (₹820).";
-    } else {
-      return "I can help you track your expenses, investments, savings, and more! Try asking about your food spending, investment portfolio, or savings goals.";
+    if (lowerQuery.includes('hello') || lowerQuery.includes('hi')) {
+      return "Hi there! 👋 I'm your AI financial assistant. I can analyze your spending, investments, and help you make better financial decisions. What would you like to know?";
     }
+    
+    if (lowerQuery.includes('spend') || lowerQuery.includes('expense')) {
+      return "Based on your recent activity, you've been spending quite actively! I can help you analyze your spending patterns, identify areas to save, and track your budget. What specific expenses would you like me to look at?";
+    }
+    
+    if (lowerQuery.includes('invest') || lowerQuery.includes('portfolio')) {
+      return "Your investment journey is important! 📈 I can help you analyze your portfolio performance, suggest diversification strategies, and provide investment insights. What aspect of investing interests you most?";
+    }
+    
+    if (lowerQuery.includes('save') || lowerQuery.includes('saving')) {
+      return "Savings are the foundation of financial security! 💰 I can help you optimize your savings strategy, set realistic goals, and track your progress. What are your savings priorities?";
+    }
+    
+    return "I'm here to help with all your financial questions! Ask me about your expenses, investments, savings, budgets, or any financial planning topics. I analyze your actual data to give personalized advice! 🤖✨";
   };
 
   const handleKeyPress = (e) => {
@@ -259,9 +303,9 @@ const Dashboard = () => {
                   <MessageCircle className="h-12 w-12 mx-auto mb-4 text-gray-300" />
                   <p className="text-sm">Start a conversation with your financial assistant!</p>
                   <div className="mt-4 space-y-1 text-xs text-gray-400">
-                    <p>Try: "How much did I spend on food this week?"</p>
-                    <p>Try: "How much did I invest in Gold ETFs this month?"</p>
-                    <p>Try: "What's my current savings balance?"</p>
+                    <p>Try: "Analyze my spending patterns this month"</p>
+                    <p>Try: "Give me personalized investment advice"</p>
+                    <p>Try: "How can I improve my financial health?"</p>
                   </div>
                 </div>
               ) : (
