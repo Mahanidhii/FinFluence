@@ -1,6 +1,6 @@
 const express = require('express');
 const { auth } = require('../middleware/auth');
-const groqService = require('../services/groqService');
+const openaiService = require('../services/openaiService');
 const financialDataService = require('../services/financialDataService');
 
 const router = express.Router();
@@ -41,7 +41,7 @@ router.post('/query', auth, async (req, res) => {
     try {
       console.log('🤖 Attempting GROQ AI response...');
       // Try to get AI response from GROQ
-      aiResponse = await groqService.generateFinancialResponse(
+      aiResponse = await openaiService.generateFinancialResponse(
         query, 
         userContext, 
         conversationHistory
@@ -124,7 +124,7 @@ router.post('/insights', auth, async (req, res) => {
     const userId = req.user.id;
     const userContext = await financialDataService.getUserFinancialContext(userId);
     
-    const insights = await groqService.generateInsights(userContext);
+    const insights = await openaiService.generateInsights(userContext);
     
     res.json({
       success: true,
@@ -146,7 +146,7 @@ router.post('/insights', auth, async (req, res) => {
 router.get('/health', auth, async (req, res) => {
   try {
     console.log('🏥 Health check requested...');
-    const isHealthy = await groqService.healthCheck();
+    const isHealthy = await openaiService.healthCheck();
     
     res.json({
       success: true,
@@ -172,7 +172,7 @@ router.post('/test', auth, async (req, res) => {
   try {
     console.log('🧪 Direct GROQ test requested...');
     
-    const testResponse = await groqService.groq.chat.completions.create({
+    const testResponse = await openaiService.openai.chat.completions.create({
       messages: [
         { role: 'system', content: 'You are a helpful assistant.' },
         { role: 'user', content: 'Say hello and confirm you are working.' }
