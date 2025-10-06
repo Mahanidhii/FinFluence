@@ -35,9 +35,31 @@ class OpenAIService {
    * @returns {Promise<string>} AI-generated response
    */
   async generateFinancialResponse(query, userContext = {}, conversationHistory = []) {
+    // Validate inputs
+    if (!query || query.trim().length === 0) {
+      throw new Error('Query cannot be empty');
+    }
+
     try {
       console.log('🤖 Generating AI response for query:', query.substring(0, 50) + '...');
       
+      // Build intelligent financial response using user data
+      const response = await this.generateIntelligentResponse(query, userContext, conversationHistory);
+      
+      console.log('✅ AI response generated successfully');
+      return response;
+
+    } catch (error) {
+      console.error('❌ Error generating AI response:', error.message);
+      throw error;
+    }
+  }
+
+  /**
+   * Generate intelligent response using user's actual financial data
+   */
+  async generateIntelligentResponse(query, userContext, conversationHistory) {
+    try {
       // Build system prompt for financial assistant
       const systemPrompt = this.buildSystemPrompt(userContext);
       

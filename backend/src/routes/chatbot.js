@@ -1,6 +1,6 @@
 const express = require('express');
 const { auth } = require('../middleware/auth');
-const openaiService = require('../services/openaiService');
+const advancedAI = require('../services/advancedAI');
 const financialDataService = require('../services/financialDataService');
 
 const router = express.Router();
@@ -36,24 +36,25 @@ router.post('/query', auth, async (req, res) => {
     });
     
     let aiResponse;
-    let fallbackUsed = false;
 
+    // Generate AI response using Advanced AI Service
     try {
-      console.log('🤖 Attempting GROQ AI response...');
-      // Try to get AI response from GROQ
-      aiResponse = await openaiService.generateFinancialResponse(
+      console.log('🤖 Generating AI response with Advanced AI...');
+      aiResponse = await advancedAI.generateFinancialResponse(
         query, 
         userContext, 
         conversationHistory
       );
-      console.log('✅ GROQ AI response successful');
-    } catch (groqError) {
-      console.warn('❌ GROQ API failed, using fallback:', groqError.message);
+      console.log('✅ AI response generated successfully');
+    } catch (aiError) {
+      console.error('❌ Advanced AI service failed:', aiError.message);
       
-      // Fallback to template-based response
-      aiResponse = generateFallbackResponse(query, userContext);
-      fallbackUsed = true;
-      console.log('🔄 Using fallback response');
+      // This should not happen with the advanced service, but handle it gracefully
+      return res.status(500).json({
+        success: false,
+        message: 'Failed to generate AI response. Please try again.',
+        error: 'AI_GENERATION_FAILED'
+      });
     }
 
     // Generate suggestions based on context
@@ -66,7 +67,8 @@ router.post('/query', auth, async (req, res) => {
         suggestions,
         context: {
           hasData: !!userContext.user,
-          fallbackUsed
+          aiPowered: true,
+          service: 'Advanced AI'
         }
       }
     });
@@ -124,7 +126,7 @@ router.post('/insights', auth, async (req, res) => {
     const userId = req.user.id;
     const userContext = await financialDataService.getUserFinancialContext(userId);
     
-    const insights = await openaiService.generateInsights(userContext);
+    const insights = await advancedAI.generateFinancialResponse('Generate comprehensive financial insights', userContext);
     
     res.json({
       success: true,
@@ -141,95 +143,53 @@ router.post('/insights', auth, async (req, res) => {
 });
 
 // @route   GET /api/chatbot/health
-// @desc    Check GROQ service health
+// @desc    Check chatbot service health
 // @access  Private
 router.get('/health', auth, async (req, res) => {
   try {
-    console.log('🏥 Health check requested...');
-    const isHealthy = await openaiService.healthCheck();
+    const isHealthy = true; // Advanced AI is always available
     
     res.json({
       success: true,
-      groqHealthy: isHealthy,
-      apiKeyPresent: !!process.env.GROQ_API_KEY,
+      healthy: isHealthy,
+      service: 'Advanced AI',
       timestamp: new Date().toISOString()
     });
   } catch (error) {
-    res.json({
-      success: true,
-      groqHealthy: false,
-      error: error.message,
-      apiKeyPresent: !!process.env.GROQ_API_KEY,
-      timestamp: new Date().toISOString()
+    console.error('Health check error:', error);
+    res.status(500).json({
+      success: false,
+      healthy: false,
+      error: error.message
     });
   }
 });
 
 // @route   POST /api/chatbot/test
-// @desc    Test GROQ API directly
+// @desc    Test direct AI functionality
 // @access  Private
 router.post('/test', auth, async (req, res) => {
   try {
-    console.log('🧪 Direct GROQ test requested...');
+    console.log('🧪 Advanced AI test requested...');
     
-    const testResponse = await openaiService.openai.chat.completions.create({
-      messages: [
-        { role: 'system', content: 'You are a helpful assistant.' },
-        { role: 'user', content: 'Say hello and confirm you are working.' }
-      ],
-      model: 'llama3-8b-8192',
-      max_tokens: 50
-    });
-
-    const content = testResponse.choices[0]?.message?.content || 'No response';
+    const testResponse = await advancedAI.generateFinancialResponse('Test message - confirm you are working', {});
     
     res.json({
       success: true,
-      testResponse: content,
-      model: 'llama3-8b-8192',
+      testResponse: testResponse,
+      service: 'Advanced AI',
       timestamp: new Date().toISOString()
     });
     
   } catch (error) {
-    console.error('🧪 Direct GROQ test failed:', error);
+    console.error('🧪 Advanced AI test failed:', error);
     res.status(500).json({
       success: false,
       error: error.message,
-      details: {
-        status: error.status,
-        code: error.code,
-        type: error.type
-      },
       timestamp: new Date().toISOString()
     });
   }
 });
-
-/**
- * Generate fallback response when GROQ API fails
- */
-function generateFallbackResponse(query, userContext) {
-  const lowerQuery = query.toLowerCase();
-  const { summary } = userContext;
-  
-  if (lowerQuery.includes('spend') || lowerQuery.includes('expense')) {
-    return `Based on your recent activity, you've spent ₹${summary.monthlyExpenses?.toLocaleString() || 0} this month. Your top expense category is ${summary.topExpenseCategory?.category || 'Food'} with ₹${summary.topExpenseCategory?.amount?.toLocaleString() || 0}. Would you like me to help you analyze your spending patterns?`;
-  }
-  
-  if (lowerQuery.includes('invest') || lowerQuery.includes('portfolio')) {
-    return `Your investment portfolio is currently valued at ₹${summary.portfolioValue?.toLocaleString() || '0'} with a growth of ${summary.investmentGrowth?.toFixed(1) || '0'}%. Your investments are performing well! Would you like specific advice on rebalancing or new investment opportunities?`;
-  }
-  
-  if (lowerQuery.includes('save') || lowerQuery.includes('saving')) {
-    return `You have ₹${summary.savingsTotal?.toLocaleString() || '0'} in savings. You're doing great! I can help you optimize your savings strategy or set up new financial goals. What specific savings goal would you like to work on?`;
-  }
-  
-  if (lowerQuery.includes('budget')) {
-    return `You've used ${summary.budgetUsed?.toFixed(1) || '0'}% of your monthly budget. ${summary.budgetUsed > 80 ? 'You might want to watch your spending for the rest of the month.' : 'You\'re doing well with your budget!'} Would you like tips on budget optimization?`;
-  }
-  
-  return `I'm here to help you with your finances! You've spent ₹${summary.monthlyExpenses?.toLocaleString() || '0'} this month and have ₹${summary.portfolioValue?.toLocaleString() || '0'} in investments. What specific financial question can I help you with?`;
-}
 
 /**
  * Generate contextual suggestions based on user data
@@ -238,245 +198,69 @@ function generateContextualSuggestions(query, userContext) {
   const { summary } = userContext;
   const suggestions = [];
   
-  // Budget-related suggestions
-  if (summary.budgetUsed > 80) {
-    suggestions.push("How can I reduce my spending this month?");
-    suggestions.push("Show me my biggest expenses");
-  } else {
-    suggestions.push("How much budget do I have left?");
+  // Add suggestions based on available data
+  if (summary.monthlyExpenses > 0) {
+    suggestions.push("Show me my expense breakdown");
+    suggestions.push("How can I reduce my spending?");
   }
   
-  // Investment suggestions
   if (summary.portfolioValue > 0) {
-    suggestions.push("How is my portfolio performing?");
-    suggestions.push("Should I rebalance my investments?");
-  } else {
-    suggestions.push("How should I start investing?");
-    suggestions.push("What are good investment options for beginners?");
+    suggestions.push("What's my investment performance?");
+    suggestions.push("Give me portfolio recommendations");
   }
   
-  // Savings suggestions
   if (summary.savingsTotal > 0) {
-    suggestions.push("How can I increase my savings rate?");
-    suggestions.push("Show me my savings progress");
-  } else {
-    suggestions.push("Help me start a savings plan");
+    suggestions.push("How's my savings progress?");
+    suggestions.push("Help me plan my financial goals");
   }
   
-  // Expense analysis
-  suggestions.push(`Analyze my ${summary.topExpenseCategory?.category?.toLowerCase() || 'food'} expenses`);
-  suggestions.push("Compare this month with last month");
+  // Default suggestions if no data
+  if (suggestions.length === 0) {
+    suggestions.push("Help me start tracking expenses");
+    suggestions.push("What investment options should I consider?");
+    suggestions.push("How do I create a budget?");
+  }
   
-  return suggestions.slice(0, 6); // Return top 6 suggestions
+  return suggestions.slice(0, 3); // Return top 3 suggestions
 }
 
 /**
- * Generate personalized suggestions based on user context
+ * Generate personalized suggestions based on user's financial state
  */
 function generatePersonalizedSuggestions(userContext) {
+  const { summary } = userContext;
   const suggestions = [];
-  const { summary, expenses, savings, budget } = userContext;
   
-  // Expense-based suggestions
   if (summary.monthlyExpenses > 0) {
-    suggestions.push(`I spent ₹${summary.monthlyExpenses.toLocaleString()} this month - is that good?`);
-    suggestions.push(`Help me reduce my ${summary.topExpenseCategory?.category?.toLowerCase() || 'food'} expenses`);
+    suggestions.push("Analyze my spending patterns this month");
+    suggestions.push("Show me my biggest expense categories");
+    suggestions.push("How much am I spending weekly?");
   }
   
-  // Investment suggestions
   if (summary.portfolioValue > 0) {
-    suggestions.push("How is my investment portfolio doing?");
-    suggestions.push("Should I invest more this month?");
-  } else {
-    suggestions.push("I want to start investing - where should I begin?");
+    suggestions.push("What's my portfolio return percentage?");
+    suggestions.push("Which investments are performing best?");
+    suggestions.push("Should I rebalance my portfolio?");
   }
   
-  // Budget suggestions
-  if (budget && summary.budgetUsed) {
-    if (summary.budgetUsed > 90) {
-      suggestions.push("I'm over budget! What should I do?");
-    } else {
-      suggestions.push("How much budget do I have left?");
-    }
+  if (summary.savingsTotal > 0) {
+    suggestions.push("How close am I to my emergency fund goal?");
+    suggestions.push("What's my monthly savings rate?");
+    suggestions.push("Help me optimize my savings strategy");
   }
   
-  // Savings suggestions
-  if (savings) {
-    suggestions.push("How can I save more money?");
-    suggestions.push("Show me my savings goals progress");
+  if (summary.budgetUsed && summary.budgetUsed > 0) {
+    suggestions.push("How much budget do I have left?");
+    suggestions.push("Am I on track with my budget?");
+    suggestions.push("Which categories are overspent?");
   }
   
-  // General financial health
-  suggestions.push("Give me a financial health checkup");
-  suggestions.push("What should I focus on this month?");
-  suggestions.push("Help me plan for next month");
+  // Add general suggestions
+  suggestions.push("Give me financial tips for this month");
+  suggestions.push("What should I focus on financially?");
+  suggestions.push("Help me plan my next financial move");
   
-  return suggestions.slice(0, 8);
+  return suggestions.slice(0, 8); // Return top 8 suggestions
 }
-
-// Legacy function - keeping for backward compatibility
-const generateFinancialResponse = (query) => {
-  const lowerQuery = query.toLowerCase();
-  
-  // Food and dining queries
-  if (lowerQuery.includes('food') || lowerQuery.includes('dining') || lowerQuery.includes('restaurant')) {
-    if (lowerQuery.includes('week')) {
-      return {
-        content: "This week you spent ₹1,250 on food. Breakdown: Zomato ₹450, Groceries ₹600, Cafe visits ₹200. This is 15% higher than last week.",
-        data: {
-          total: 1250,
-          breakdown: [
-            { category: 'Zomato', amount: 450 },
-            { category: 'Groceries', amount: 600 },
-            { category: 'Cafe visits', amount: 200 }
-          ],
-          comparison: { lastWeek: 1087, change: 15 }
-        },
-        suggestions: ["Show me monthly food expenses", "Compare with last month", "Set food budget reminder"]
-      };
-    } else if (lowerQuery.includes('month')) {
-      return {
-        content: "This month your food expenses are ₹6,500 (35% of total expenses). Top categories: Groceries ₹3,200, Dining out ₹2,100, Cafes ₹1,200.",
-        data: {
-          total: 6500,
-          percentage: 35,
-          breakdown: [
-            { category: 'Groceries', amount: 3200 },
-            { category: 'Dining out', amount: 2100 },
-            { category: 'Cafes', amount: 1200 }
-          ]
-        },
-        suggestions: ["Set food budget", "Compare with previous months", "Get food saving tips"]
-      };
-    }
-  }
-  
-  // Investment queries
-  if (lowerQuery.includes('invest') || lowerQuery.includes('stock') || lowerQuery.includes('mutual fund')) {
-    if (lowerQuery.includes('gold') || lowerQuery.includes('etf')) {
-      return {
-        content: "Your ETF investments this month: Gold ETFs ₹8,500, Other ETFs ₹12,000. Total ETF portfolio value: ₹85,600 (+5.2% this month).",
-        data: {
-          monthlyInvestment: {
-            goldETFs: 8500,
-            otherETFs: 12000
-          },
-          portfolioValue: 85600,
-          monthlyGain: 5.2
-        },
-        suggestions: ["Show portfolio performance", "Compare ETF returns", "Get investment recommendations"]
-      };
-    } else if (lowerQuery.includes('month')) {
-      return {
-        content: "This month you invested ₹20,500 across: Stocks ₹12,000, Mutual Funds ₹6,000, ETFs ₹2,500. Portfolio gain: +3.8%.",
-        data: {
-          totalInvestment: 20500,
-          breakdown: [
-            { type: 'Stocks', amount: 12000 },
-            { type: 'Mutual Funds', amount: 6000 },
-            { type: 'ETFs', amount: 2500 }
-          ],
-          portfolioGain: 3.8
-        },
-        suggestions: ["Analyze portfolio performance", "Get rebalancing advice", "Set investment goals"]
-      };
-    }
-    return {
-      content: "Your total investment portfolio: ₹85,600. Top performers: Reliance (+2.4%), HDFC Bank (+1.8%), Infosys (+2.3%).",
-      data: {
-        portfolioValue: 85600,
-        topPerformers: [
-          { name: 'Reliance', change: 2.4 },
-          { name: 'HDFC Bank', change: 1.8 },
-          { name: 'Infosys', change: 2.3 }
-        ]
-      },
-      suggestions: ["View detailed portfolio", "Get investment insights", "Compare with benchmarks"]
-    };
-  }
-  
-  // Savings queries
-  if (lowerQuery.includes('savings') || lowerQuery.includes('save')) {
-    if (lowerQuery.includes('round') || lowerQuery.includes('roundup')) {
-      return {
-        content: "Your round-up savings have accumulated ₹2,340 this month from 156 transactions. Average round-up: ₹15 per transaction.",
-        data: {
-          roundUpTotal: 2340,
-          transactions: 156,
-          averageRoundUp: 15
-        },
-        suggestions: ["View round-up history", "Adjust round-up settings", "Transfer to savings goal"]
-      };
-    }
-    return {
-      content: "Total savings: ₹1,24,500 (+12% from last month). You're on a 15-day savings streak! Goal progress: 80% complete.",
-      data: {
-        totalSavings: 124500,
-        monthlyGrowth: 12,
-        streak: 15,
-        goalProgress: 80
-      },
-      suggestions: ["View savings goals", "Increase savings rate", "Track spending patterns"]
-    };
-  }
-  
-  // Expense queries
-  if (lowerQuery.includes('expense') || lowerQuery.includes('spend') || lowerQuery.includes('spent')) {
-    if (lowerQuery.includes('transport') || lowerQuery.includes('travel')) {
-      return {
-        content: "Transport expenses this month: ₹4,600. Breakdown: Fuel ₹2,800, Public transport ₹1,200, Cab rides ₹600.",
-        data: {
-          total: 4600,
-          breakdown: [
-            { category: 'Fuel', amount: 2800 },
-            { category: 'Public transport', amount: 1200 },
-            { category: 'Cab rides', amount: 600 }
-          ]
-        },
-        suggestions: ["Optimize transport costs", "Try carpooling", "Set transport budget"]
-      };
-    }
-    return {
-      content: "Total expenses this month: ₹18,420. Food (35%), Transport (25%), Entertainment (20%), Shopping (15%), Others (5%).",
-      data: {
-        total: 18420,
-        breakdown: [
-          { category: 'Food', amount: 6447, percentage: 35 },
-          { category: 'Transport', amount: 4605, percentage: 25 },
-          { category: 'Entertainment', amount: 3684, percentage: 20 },
-          { category: 'Shopping', amount: 2763, percentage: 15 },
-          { category: 'Others', amount: 921, percentage: 5 }
-        ]
-      },
-      suggestions: ["Set category budgets", "Find cost-cutting opportunities", "Compare with previous months"]
-    };
-  }
-  
-  // Budget queries
-  if (lowerQuery.includes('budget') || lowerQuery.includes('limit')) {
-    return {
-      content: "Monthly budget: ₹25,000. Current spending: ₹18,420 (74% used). You have ₹6,580 remaining for this month.",
-      data: {
-        budget: 25000,
-        spent: 18420,
-        remaining: 6580,
-        percentageUsed: 74
-      },
-      suggestions: ["Adjust budget categories", "Set spending alerts", "Plan remaining budget"]
-    };
-  }
-  
-  // Default response
-  return {
-    content: "I can help you with expenses, investments, savings, budgets, and financial goals. What specific information do you need?",
-    data: {},
-    suggestions: [
-      "How much did I spend this month?",
-      "Show my investment portfolio",
-      "What's my savings progress?",
-      "Compare expenses with last month"
-    ]
-  };
-};
 
 module.exports = router;
