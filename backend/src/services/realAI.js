@@ -1,9 +1,3 @@
-/**
- * Real AI Financial Assistant Service
- * Uses OpenAI GPT models to provide genuine financial advice
- * No fallbacks, no templates - just real AI responses
- */
-
 const OpenAI = require('openai');
 
 class RealAIFinancialService {
