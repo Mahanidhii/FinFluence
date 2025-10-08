@@ -1,6 +1,6 @@
 const express = require('express');
 const { auth } = require('../middleware/auth');
-const realAI = require('../services/realAI');
+const smartChatbot = require('../services/smartFinancialChatbot');
 const financialDataService = require('../services/financialDataService');
 
 const router = express.Router();
@@ -35,24 +35,24 @@ router.post('/query', auth, async (req, res) => {
       investmentsCount: userContext.investments?.length || 0
     });
     
-    let aiResponse;
+    let chatbotResponse;
 
-    // Generate AI response using Real AI Service (OpenAI)
+    // Generate response using Smart Financial Chatbot
     try {
-      console.log('🤖 Generating real AI response...');
-      aiResponse = await realAI.generateFinancialResponse(
+      console.log('🤖 Generating smart financial response...');
+      chatbotResponse = await smartChatbot.processQuery(
         query, 
         userContext, 
         conversationHistory
       );
-      console.log('✅ Real AI response generated successfully');
-    } catch (aiError) {
-      console.error('❌ Real AI service failed:', aiError.message);
+      console.log('✅ Smart chatbot response generated successfully');
+    } catch (chatbotError) {
+      console.error('❌ Smart chatbot service failed:', chatbotError.message);
       
       return res.status(500).json({
         success: false,
-        message: `AI service error: ${aiError.message}`,
-        error: 'AI_SERVICE_ERROR'
+        message: `Chatbot service error: ${chatbotError.message}`,
+        error: 'CHATBOT_SERVICE_ERROR'
       });
     }
 
@@ -62,12 +62,12 @@ router.post('/query', auth, async (req, res) => {
     res.json({
       success: true,
       response: {
-        content: aiResponse,
+        content: chatbotResponse,
         suggestions,
         context: {
           hasData: !!userContext.user,
           aiPowered: true,
-          service: 'Real AI (OpenAI)'
+          service: 'Smart Financial Chatbot'
         }
       }
     });
@@ -125,7 +125,7 @@ router.post('/insights', auth, async (req, res) => {
     const userId = req.user.id;
     const userContext = await financialDataService.getUserFinancialContext(userId);
     
-    const insights = await realAI.generateInsights(userContext);
+    const insights = await smartChatbot.processQuery('Provide me with comprehensive financial insights based on my data', userContext);
     
     res.json({
       success: true,
@@ -146,13 +146,13 @@ router.post('/insights', auth, async (req, res) => {
 // @access  Private
 router.get('/health', auth, async (req, res) => {
   try {
-    const isHealthy = await realAI.healthCheck();
+    const healthStatus = await smartChatbot.healthCheck();
     
     res.json({
       success: true,
-      healthy: isHealthy,
-      service: 'Real AI (OpenAI)',
-      timestamp: new Date().toISOString()
+      healthy: healthStatus.status === 'healthy',
+      service: 'Smart Financial Chatbot',
+      timestamp: healthStatus.timestamp
     });
   } catch (error) {
     console.error('Health check error:', error);
@@ -169,19 +169,19 @@ router.get('/health', auth, async (req, res) => {
 // @access  Private
 router.post('/test', auth, async (req, res) => {
   try {
-    console.log('🧪 Real AI test requested...');
+    console.log('🧪 Smart Chatbot test requested...');
     
-    const testResponse = await realAI.generateFinancialResponse('Test message - confirm you are working', {});
+    const testResponse = await smartChatbot.processQuery('Hello, are you working properly?', {});
     
     res.json({
       success: true,
       testResponse: testResponse,
-      service: 'Real AI (OpenAI)',
+      service: 'Smart Financial Chatbot',
       timestamp: new Date().toISOString()
     });
     
   } catch (error) {
-    console.error('🧪 Real AI test failed:', error);
+    console.error('🧪 Smart Chatbot test failed:', error);
     res.status(500).json({
       success: false,
       error: error.message,
