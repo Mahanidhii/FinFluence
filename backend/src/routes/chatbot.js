@@ -1,6 +1,6 @@
 const express = require('express');
 const { auth } = require('../middleware/auth');
-const advancedAI = require('../services/advancedAI');
+const realAI = require('../services/realAI');
 const financialDataService = require('../services/financialDataService');
 
 const router = express.Router();
@@ -37,23 +37,22 @@ router.post('/query', auth, async (req, res) => {
     
     let aiResponse;
 
-    // Generate AI response using Advanced AI Service
+    // Generate AI response using Real AI Service (OpenAI)
     try {
-      console.log('🤖 Generating AI response with Advanced AI...');
-      aiResponse = await advancedAI.generateFinancialResponse(
+      console.log('🤖 Generating real AI response...');
+      aiResponse = await realAI.generateFinancialResponse(
         query, 
         userContext, 
         conversationHistory
       );
-      console.log('✅ AI response generated successfully');
+      console.log('✅ Real AI response generated successfully');
     } catch (aiError) {
-      console.error('❌ Advanced AI service failed:', aiError.message);
+      console.error('❌ Real AI service failed:', aiError.message);
       
-      // This should not happen with the advanced service, but handle it gracefully
       return res.status(500).json({
         success: false,
-        message: 'Failed to generate AI response. Please try again.',
-        error: 'AI_GENERATION_FAILED'
+        message: `AI service error: ${aiError.message}`,
+        error: 'AI_SERVICE_ERROR'
       });
     }
 
@@ -68,7 +67,7 @@ router.post('/query', auth, async (req, res) => {
         context: {
           hasData: !!userContext.user,
           aiPowered: true,
-          service: 'Advanced AI'
+          service: 'Real AI (OpenAI)'
         }
       }
     });
@@ -126,7 +125,7 @@ router.post('/insights', auth, async (req, res) => {
     const userId = req.user.id;
     const userContext = await financialDataService.getUserFinancialContext(userId);
     
-    const insights = await advancedAI.generateFinancialResponse('Generate comprehensive financial insights', userContext);
+    const insights = await realAI.generateInsights(userContext);
     
     res.json({
       success: true,
@@ -147,7 +146,7 @@ router.post('/insights', auth, async (req, res) => {
 // @access  Private
 router.get('/health', auth, async (req, res) => {
   try {
-    const isHealthy = true; // Advanced AI is always available
+    const isHealthy = await realAI.healthCheck();
     
     res.json({
       success: true,
@@ -172,7 +171,7 @@ router.post('/test', auth, async (req, res) => {
   try {
     console.log('🧪 Advanced AI test requested...');
     
-    const testResponse = await advancedAI.generateFinancialResponse('Test message - confirm you are working', {});
+    const testResponse = await realAI.generateFinancialResponse('Test message - confirm you are working', {});
     
     res.json({
       success: true,

@@ -17,6 +17,8 @@ const register = async (req, res) => {
     // Check for validation errors
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
+      console.error('Registration validation errors:', errors.array());
+      console.error('Request body:', req.body);
       return res.status(400).json({
         success: false,
         message: 'Validation failed',
@@ -78,6 +80,8 @@ const login = async (req, res) => {
     // Check for validation errors
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
+      console.error('Login validation errors:', errors.array()); // Validation errorw
+      console.error('Request body:', req.body); 
       return res.status(400).json({
         success: false,
         message: 'Validation failed',
