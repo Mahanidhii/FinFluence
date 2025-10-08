@@ -151,7 +151,7 @@ router.get('/health', auth, async (req, res) => {
     res.json({
       success: true,
       healthy: isHealthy,
-      service: 'Advanced AI',
+      service: 'Real AI (OpenAI)',
       timestamp: new Date().toISOString()
     });
   } catch (error) {
@@ -169,19 +169,19 @@ router.get('/health', auth, async (req, res) => {
 // @access  Private
 router.post('/test', auth, async (req, res) => {
   try {
-    console.log('🧪 Advanced AI test requested...');
+    console.log('🧪 Real AI test requested...');
     
     const testResponse = await realAI.generateFinancialResponse('Test message - confirm you are working', {});
     
     res.json({
       success: true,
       testResponse: testResponse,
-      service: 'Advanced AI',
+      service: 'Real AI (OpenAI)',
       timestamp: new Date().toISOString()
     });
     
   } catch (error) {
-    console.error('🧪 Advanced AI test failed:', error);
+    console.error('🧪 Real AI test failed:', error);
     res.status(500).json({
       success: false,
       error: error.message,
