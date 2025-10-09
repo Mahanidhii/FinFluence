@@ -1,4 +1,5 @@
-# 💰 FinFluence - Social Finance Platform
+# FinFluence 
+# Social Finance Platform
 
 <div align="center">
 
@@ -12,11 +13,11 @@
 
 </div>
 
-## 📋 Overview
+## Overview
 
 FinFluence is a modern social finance platform inspired by the community aspects of Reddit, the professional networking of LinkedIn, and the engaging interface of Instagram. It empowers users to manage their finances while connecting with a supportive community of like-minded individuals.
 
-**🎯 Mission**: Make financial literacy accessible, engaging, and social while promoting healthy financial habits without harmful competition.
+**Mission**: Make financial literacy accessible, engaging among the current generation and making it social while promoting healthy financial habits without harmful competition.
 
 ## Features
 
